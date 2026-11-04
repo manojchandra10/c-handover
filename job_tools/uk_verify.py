@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Second live check of every kept UK role, then removal of duplicates.
 
-Usage: python3 -I job_tools/uk_verify.py <data_dir> [--workers 8]
+Usage: python3 -I job_tools/uk_verify.py <data_dir> [--workers 8] [--seed web_roles.json]
 Reads <data_dir>/roles.jsonl (from uk_crawl.py), opens each kept advert again in a separate request, and writes
 <data_dir>/roles_checked.jsonl. A role stays in the Jobs sheet only when both checks found it open.
+--seed adds roles found earlier by web search, so they are re-opened as well.
 Second-check results: Open, Closed (with the reason) or Not re-opened (no answer, or robots.txt).
 """
 import sys, json, re, argparse, datetime as dt
@@ -21,6 +22,9 @@ def second_check(role):
     out = {"second_check": "", "second_note": "", "second_checked_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M")}
     if not url.startswith("http"):
         out.update(second_check="Not re-opened", second_note="No link to re-open")
+        return out
+    if re.search(r"/(categories|search|tracker)(/|\?|$)|/graduate-jobs/?$", urlparse(url).path + ("?" if urlparse(url).query else "")):
+        out.update(second_check="Not re-opened", second_note="The link is a list of many jobs, so it cannot show this one is open")
         return out
     r = C.fetch(url, timeout=20)
     if r is None:
@@ -76,9 +80,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("data_dir")
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--seed", default="")
     a = ap.parse_args()
     d = Path(a.data_dir)
-    roles = [json.loads(l) for l in (d / "roles.jsonl").read_text(encoding="utf8").splitlines() if l.strip()]
+    roles = [json.loads(l) for l in (d / "roles.jsonl").read_text(encoding="utf8").splitlines() if l.strip()] \
+        if (d / "roles.jsonl").exists() else []
+    if a.seed:
+        have = {(r.get("url"), r.get("title")) for r in roles}
+        for r in json.loads(Path(a.seed).read_text(encoding="utf8")):
+            if (r.get("url"), r.get("title")) not in have:
+                r.setdefault("source_kind", "Web search")
+                r.setdefault("checked_at", "")
+                r.setdefault("city", "")
+                roles.append(r)
     kept = [r for r in roles if not r.get("exclude")]
     print(f"roles read {len(roles)}, kept after the first check {len(kept)}")
 

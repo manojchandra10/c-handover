@@ -35,3 +35,7 @@ python3 -I job_tools/uk_build.py /tmp/uk_data . --label "5 November 2026"
 - `uk_verify.py` re-opens every kept advert in a separate request, drops any that have closed and removes duplicates.
 - `uk_build.py` writes `UK_Data_Jobs.xlsx` (Jobs, Other live roles, Excluded, Companies checked) and `UK_Speculative_Contacts.xlsx` (Contacts, No email found, and the email text). Run the xlsx skill's `recalc.py` on both afterwards.
 - `uk_rules.py` holds the title, level, location, deadline, visa-note and email rules. `uk_test.py` and `uk_test_e2e.py` test them offline. The second test runs the whole pipeline against a local web server.
+
+### Running the UK crawl on GitHub Actions
+
+`.github/workflows/uk_crawl.yml` runs the steps above on a GitHub-hosted runner, which has normal internet access. It starts when the workflow file or `uk_data/run_crawl.txt` changes on the `claude/zealous-hawking-9aw09d` branch. Each run lasts up to about 5 hours 50 minutes. It saves progress in `uk_data/crawl/` and commits `UK_Data_Jobs.xlsx` and `UK_Speculative_Contacts.xlsx` to the branch. If the run ends before every company is checked, edit `uk_data/run_crawl.txt` and push: the next run carries on from where the last one stopped.

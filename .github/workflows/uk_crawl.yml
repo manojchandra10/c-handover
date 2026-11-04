@@ -1,0 +1,79 @@
+name: UK careers crawl
+
+# Runs the UK sponsor careers-page crawler on a GitHub-hosted runner (which has normal internet access)
+# and commits the results to this branch. It starts when this file or uk_data/run_crawl.txt changes on the branch.
+# Each run resumes from uk_data/crawl/, so a second run picks up any companies the first one did not reach.
+on:
+  push:
+    branches: [claude/zealous-hawking-9aw09d]
+    paths:
+      - ".github/workflows/uk_crawl.yml"
+      - "uk_data/run_crawl.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: uk-crawl
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      DATA: uk_data/crawl
+      PY: .venv/bin/python
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Install packages
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet requests beautifulsoup4 lxml openpyxl pandas
+
+      - name: Offline tests
+        run: |
+          $PY -I job_tools/uk_test.py
+          $PY -I job_tools/uk_test_e2e.py
+
+      - name: Add Companies House industry codes (first run only)
+        continue-on-error: true
+        run: |
+          if [ ! -f uk_data/uk_shortlist_sic.csv ]; then
+            W="$GITHUB_WORKSPACE"
+            cd "$RUNNER_TEMP"
+            timeout 30m "$W/$PY" -I "$W/job_tools/uk_sic.py" "$W/uk_data/sponsor_register_2026-11-03.csv" \
+              "$W/uk_data/uk_shortlist.csv" "$W/uk_data/uk_shortlist_sic.csv"
+          fi
+
+      - name: Job boards (jobs.ac.uk, Analysis Function, DWP Find a job)
+        run: |
+          mkdir -p "$DATA"
+          LIST=uk_data/uk_shortlist_sic.csv; [ -f "$LIST" ] || LIST=uk_data/uk_shortlist.csv
+          timeout 45m $PY -I job_tools/uk_crawl.py "$LIST" "$DATA" --sources jobsacuk,analysis,findajob || true
+
+      - name: Company careers pages
+        run: |
+          LIST=uk_data/uk_shortlist_sic.csv; [ -f "$LIST" ] || LIST=uk_data/uk_shortlist.csv
+          timeout 225m $PY -I job_tools/uk_crawl.py "$LIST" "$DATA" --sources careers --workers 16 || true
+
+      - name: Second check and workbooks
+        run: |
+          timeout 35m $PY -I job_tools/uk_verify.py "$DATA" --workers 10 --seed uk_data/web_roles_2026-11-04.json || true
+          $PY -I job_tools/uk_build.py "$DATA" . --label "$(date -u +'%-d %B %Y')"
+
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf .venv
+          git add -A uk_data UK_Data_Jobs.xlsx UK_Speculative_Contacts.xlsx || true
+          git commit -q -m "UK careers crawl results ($(date -u +'%Y-%m-%d %H:%M') UTC)" || exit 0
+          git pull --rebase origin "${{ github.ref_name }}" || true
+          git push origin "HEAD:${{ github.ref_name }}"
