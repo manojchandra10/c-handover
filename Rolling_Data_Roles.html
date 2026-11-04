@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Rolling Data Roles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,600..800&family=JetBrains+Mono:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column. A start-window timeline sits on top; each role is a row led by a ticket naming the city and the closing date. */
+:root {
+  --bg: #F3F4F8;
+  --surface: #FFFFFF;
+  --ink: #171A2F;
+  --muted: #5A6077;
+  --line: #D9DCE6;
+  --accent: #3045C4;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E5E8FA;
+  --urgent: #B3261E;
+  --urgent-bg: #FCE8E6;
+  --soon: #8A5300;
+  --soon-bg: #FDF0DA;
+  --good: #1D6A42;
+  --good-bg: #E1F2E8;
+  --info: #0F5C8A;
+  --info-bg: #E1EEF7;
+  --neutral-bg: #ECEEF3;
+  --past: #7C8296;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1220;
+    --surface: #171B2D;
+    --ink: #E6E8F2;
+    --muted: #9EA4BA;
+    --line: #2A3048;
+    --accent: #8D9BFF;
+    --accent-ink: #0B0F25;
+    --accent-soft: #1F2552;
+    --urgent: #FF8C82;
+    --urgent-bg: #3A1B1B;
+    --soon: #F2C164;
+    --soon-bg: #34280F;
+    --good: #74D3A0;
+    --good-bg: #13301F;
+    --info: #80C3EE;
+    --info-bg: #13293A;
+    --neutral-bg: #1D2236;
+    --past: #81879D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1220;
+  --surface: #171B2D;
+  --ink: #E6E8F2;
+  --muted: #9EA4BA;
+  --line: #2A3048;
+  --accent: #8D9BFF;
+  --accent-ink: #0B0F25;
+  --accent-soft: #1F2552;
+  --urgent: #FF8C82;
+  --urgent-bg: #3A1B1B;
+  --soon: #F2C164;
+  --soon-bg: #34280F;
+  --good: #74D3A0;
+  --good-bg: #13301F;
+  --info: #80C3EE;
+  --info-bg: #13293A;
+  --neutral-bg: #1D2236;
+  --past: #81879D;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 28px 72px;
+  display: grid;
+  gap: 30px;
+}
+@media (min-width: 720px) { .wrap { padding-inline: 28px; padding-block: 40px 88px; } }
+h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* Header */
+.top { display: grid; gap: 10px; }
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(36px, 6.4vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.lede { margin: 0; max-width: 66ch; color: var(--muted); font-size: 17px; }
+.tally {
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.tally b { font-weight: 600; color: var(--ink); }
+.tally .hot b { color: var(--urgent); }
+
+/* Start window */
+.window {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 16px 16px;
+}
+@media (min-width: 720px) { .window { padding: 22px 24px 18px; } }
+.track { position: relative; margin: 6px 0 4px; padding-top: 50px; }
+.months { position: absolute; inset: 0 0 auto 0; height: 20px; }
+.month {
+  position: absolute;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-left: 5px;
+  border-left: 1px solid var(--line);
+  line-height: 20px;
+  white-space: nowrap;
+}
+.lanes { position: relative; display: grid; gap: 8px; padding-block: 8px; }
+.lane { position: relative; height: 30px; border-radius: 6px; background: var(--neutral-bg); }
+.bar {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding-inline: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bar.temp { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+.bar.perm { background: var(--info-bg); color: var(--info); border: 1px solid var(--info); }
+.bar-label { position: relative; z-index: 2; background: inherit; padding-inline: 4px; margin-left: -4px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; }
+.pin { position: absolute; z-index: 1; top: -4px; bottom: 0; width: 0; border-left: 2px dashed var(--muted); }
+.pin.no-badge span { display: none; }
+.pin.is-today { border-left: 2px solid var(--accent); }
+.pin span {
+  position: absolute;
+  top: -20px;
+  left: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--bg);
+}
+.pin.is-today span { background: var(--accent); color: var(--accent-ink); }
+.legend {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px 22px;
+  grid-template-columns: minmax(0, 1fr);
+  font-size: 15px;
+}
+@media (min-width: 720px) { .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.legend li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.legend .num {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--bg);
+}
+.legend li:first-child .num { background: var(--accent); color: var(--accent-ink); }
+.legend b { font-weight: 700; }
+.fine { margin: 12px 0 0; font-size: 13px; color: var(--muted); max-width: 90ch; }
+
+/* Notes */
+.note-grid { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .note-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .note-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.note { border-top: 2px solid var(--ink); padding-top: 10px; min-width: 0; }
+.note h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+.note p { margin: 0; font-size: 15px; color: var(--muted); }
+
+/* Underrated cities */
+.under-intro { margin: 0 0 12px; max-width: 75ch; color: var(--muted); font-size: 16px; }
+.city-rows { border-top: 2px solid var(--ink); }
+.city-row {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 4px 22px;
+  padding-block: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.city-row h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.2;
+  grid-row: span 3;
+}
+.city-row .stat { margin: 0; font-size: 15px; }
+.city-row .small { grid-column: 2; }
+.city-note { margin: 12px 0 0; font-size: 15px; color: var(--muted); max-width: 80ch; }
+@media (max-width: 640px) {
+  .city-row { grid-template-columns: minmax(0, 1fr); }
+  .city-row h3 { grid-row: auto; }
+  .city-row .small { grid-column: 1; }
+}
+
+/* Controls */
+.controls { display: grid; gap: 14px; }
+.group-label {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+.pick {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.pick .n { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--muted); margin-left: 5px; }
+.pick[aria-pressed="true"], .pick[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pick[aria-pressed="true"] .n, .pick[aria-selected="true"] .n { color: var(--bg); opacity: 0.75; }
+.pick.is-zero { color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.filters label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.filters input[type="search"], .filters select, .side select, .add input, .add select, .add textarea, .mynotes textarea {
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  min-width: 0;
+}
+.filters .search { flex: 1 1 240px; }
+.filters .search input { width: 100%; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Role rows */
+.list { display: grid; gap: 12px; }
+.role {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 216px;
+  gap: 16px;
+  align-items: start;
+}
+.role.is-done { opacity: 0.62; }
+.ticket {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 8px 4px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--neutral-bg);
+  color: var(--ink);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.t-city {
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  padding-bottom: 5px;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed currentColor;
+  width: 100%;
+}
+.t-day { font-family: var(--font-mono); font-size: 25px; font-weight: 600; line-height: 1.05; }
+.t-mon { font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.t-cap { font-size: 12px; line-height: 1.25; color: var(--muted); margin-top: 3px; }
+.ticket.tone-urgent { background: var(--urgent-bg); border-color: var(--urgent); color: var(--urgent); }
+.ticket.tone-urgent .t-cap { color: var(--urgent); }
+.ticket.tone-soon { background: var(--soon-bg); border-color: var(--soon); color: var(--soon); }
+.ticket.tone-soon .t-cap { color: var(--soon); }
+.ticket.tone-past { color: var(--past); }
+.ticket.tone-past .t-day { text-decoration: line-through; }
+
+.role-main { min-width: 0; display: grid; gap: 6px; }
+.employer {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+.employer .kind { font-weight: 600; color: var(--accent); }
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.22;
+  text-wrap: balance;
+}
+.title a { color: var(--ink); text-decoration: none; }
+.title a:hover { text-decoration: underline; }
+.meta { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 15px; }
+.meta .sal { font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+.fit { margin: 0; font-size: 15px; }
+.small { margin: 0; font-size: 14px; color: var(--muted); }
+.small b { font-weight: 700; color: var(--ink); }
+.small.warn b { color: var(--soon); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--neutral-bg);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chip.tone-good { background: var(--good-bg); color: var(--good); }
+.chip.tone-info { background: var(--info-bg); color: var(--info); }
+.chip.tone-soon { background: var(--soon-bg); color: var(--soon); }
+.chip.pri-A { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.chip.pri-C { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+
+.side { display: grid; gap: 10px; min-width: 0; }
+.side label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.side select { width: 100%; }
+.open {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+.open:hover { filter: brightness(1.06); }
+.mynotes summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
+.mynotes textarea { width: 100%; margin-top: 6px; resize: vertical; min-height: 88px; }
+.note-hint { display: block; min-height: 1.2em; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.remove {
+  font: inherit;
+  font-size: 14px;
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.remove.arm { border-color: var(--urgent); color: var(--urgent); }
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty p { margin: 0; }
+.empty .empty-title { font-family: var(--font-display); font-stretch: 87.5%; font-weight: 700; font-size: 19px; color: var(--ink); margin-bottom: 4px; }
+
+/* Left out, add form, footer */
+.fold { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.fold > summary { cursor: pointer; font-family: var(--font-display); font-stretch: 87.5%; font-weight: 700; font-size: 19px; }
+.fold .intro { margin: 10px 0 0; color: var(--muted); font-size: 15px; max-width: 75ch; }
+.leftout { margin: 12px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; max-width: 90ch; }
+.leftout b { font-weight: 700; }
+.add form { display: grid; gap: 12px; margin-top: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.add label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; color: var(--muted); min-width: 0; }
+.add .wide { grid-column: 1 / -1; }
+.add button[type="submit"] {
+  justify-self: start;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+footer { font-size: 14px; color: var(--muted); max-width: 80ch; }
+footer p { margin: 0 0 6px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  max-width: calc(100% - 32px);
+  transition: opacity 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+@media (max-width: 480px) { .bar { font-size: 11.5px; padding-inline: 8px; } }
+
+@media (max-width: 780px) {
+  .role { grid-template-columns: 78px minmax(0, 1fr); gap: 12px 14px; }
+  .side { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .side .mynotes, .side .remove { grid-column: 1 / -1; }
+  .t-day { font-size: 21px; }
+  .t-city { font-size: 12px; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Ten biggest UK tech cities and five underrated ones · listings checked 13 Oct 2026</p>
+    <h1>Rolling Data Roles</h1>
+    <p class="lede">Graduate and junior data roles you can apply for now, in the ten biggest UK tech cities and five underrated ones. Each has a rolling deadline, an open listing or a start date before spring 2027. This page is separate from your Data Job Hunt 2026 tracker and leaves out the roles already in it.</p>
+    <p class="tally" id="tally" aria-live="polite"><span>Counting roles</span></p>
+  </header>
+
+  <section class="window" aria-labelledby="window-h">
+    <h2 id="window-h">Your start window</h2>
+    <div class="track" id="track" aria-hidden="true">
+      <div class="months">
+        <span class="month" style="left:0%">Oct</span>
+        <span class="month" style="left:20.67%">Nov</span>
+        <span class="month" style="left:40.67%">Dec</span>
+        <span class="month" style="left:61.33%">Jan</span>
+        <span class="month" style="left:82%">Feb</span>
+      </div>
+      <div class="lanes">
+        <div class="lane"><div class="bar temp" style="left:0%"><span class="bar-label">Temporary or fixed-term: start now</span></div></div>
+        <div class="lane"><div class="bar perm" style="left:20%"><span class="bar-label">Permanent: from your visa application</span></div></div>
+        <div class="pin is-today" id="pin-today" style="left:8%"><span>1</span></div>
+        <div class="pin" style="left:20%"><span>2</span></div>
+        <div class="pin" style="left:60.67%"><span>3</span></div>
+        <div class="pin" style="left:78.67%"><span>4</span></div>
+      </div>
+    </div>
+    <ol class="legend">
+      <li><span class="num">1</span><span><b id="today-label">Today:</b> your course has ended, so you can work full time in temporary or fixed-term roles.</span></li>
+      <li><span class="num">2</span><span><b>Late October:</b> results come out and your Graduate visa application goes in. University guidance says a permanent full-time job can start from then.</span></li>
+      <li><span class="num">3</span><span><b>31 December 2026:</b> the last day to apply and still get a two-year Graduate visa.</span></li>
+      <li><span class="num">4</span><span><b>27 January 2027:</b> your Student visa ends. The Graduate visa application has to go in before this date.</span></li>
+    </ol>
+    <p class="fine">General information from GOV.UK and university visa guidance, and not immigration advice. Check with your university's visa team before you accept an offer. Each role below says which part of the window it fits.</p>
+  </section>
+
+  <section class="notes" aria-labelledby="notes-h">
+    <h2 id="notes-h">Before you apply</h2>
+    <div class="note-grid">
+      <article class="note">
+        <h3>Rolling deadlines close early</h3>
+        <p>A rolling deadline means the employer reads applications as they arrive and takes the advert down once the role is filled. Apply within a few days of finding one.</p>
+      </article>
+      <article class="note">
+        <h3>Agency adverts</h3>
+        <p>Many of these roles come through agencies such as GRB, Harnham, Adecco and Rullion. Ask who the employer is, and say you are applying for a Graduate visa, which needs no sponsorship from them.</p>
+      </article>
+      <article class="note">
+        <h3>Security vetting</h3>
+        <p>Some consultancies place graduates on defence or government work that needs National Security Vetting. That often asks for several years of UK residence, so raise it before the assessment stage.</p>
+      </article>
+      <article class="note">
+        <h3>Training academies</h3>
+        <p>Sigma Labs and EA Change train you and then place you with clients. Read the contract for minimum service periods and repayment clauses before you sign.</p>
+      </article>
+      <article class="note">
+        <h3>Adjustments at tests and interviews</h3>
+        <p>You can ask any employer for adjustments, such as extra time, a short break or questions in advance. You do not have to explain your health in detail, and most forms have a box for it.</p>
+      </article>
+      <article class="note">
+        <h3>Your CV and letters</h3>
+        <p>Send Manoj_Chandra_CV.docx. Bluesmith says it may reject AI-written applications, so write that covering letter in your own words.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="under" aria-labelledby="under-h">
+    <h2 id="under-h">Underrated cities</h2>
+    <p class="under-intro">These five have strong demand for data and tech work but get far less attention than the big ten. They are smaller than London or Manchester, so each advert is likely to draw fewer applicants. No dataset measures that directly.</p>
+    <div class="city-rows">
+      <article class="city-row">
+        <h3>Nottingham</h3>
+        <p class="stat">3.3% of local jobs are in tech, joint third of 61 UK cities with Edinburgh and ahead of Manchester's 3.2%. Optisearch ranks it fifth for tech careers.</p>
+        <p class="small"><b>From home:</b> you live here. Your Data Job Hunt 2026 tracker already holds the Nottingham roles, so none are repeated below.</p>
+        <p class="small"><b>Employers to watch:</b> Experian, Capital One, Boots, E.ON Next, Nottingham University Hospitals and the University of Nottingham.</p>
+      </article>
+      <article class="city-row">
+        <h3>Derby</h3>
+        <p class="stat">13th of UK cities for job adverts per resident (1,658 per 10,000), ahead of Cambridge. 2.3% of local jobs are in tech, the same share as Leeds.</p>
+        <p class="small"><b>From home:</b> about 20 minutes by train.</p>
+        <p class="small"><b>Employers to watch:</b> Derby City Council, which advertised a Business and Data Analyst at £39,000 to £40,000 in early October, plus Rolls-Royce, East Midlands Railway, Quick Release and Incora.</p>
+      </article>
+      <article class="city-row">
+        <h3>Leicester</h3>
+        <p class="stat">2.7% of local jobs are in tech, slightly above London's 2.6%.</p>
+        <p class="small"><b>From home:</b> about 30 minutes by train.</p>
+        <p class="small"><b>Employers to watch:</b> NEXT, which had several analyst roles open in October, plus Dunelm, Cadent, Centrica and Hastings Direct.</p>
+      </article>
+      <article class="city-row">
+        <h3>Coventry</h3>
+        <p class="stat">16th for job adverts per resident (1,398 per 10,000), ahead of Cambridge. Optisearch ranks it 11th for tech careers, with the third-highest average pay in its study.</p>
+        <p class="small"><b>From home:</b> over an hour by train, so moving may suit better.</p>
+        <p class="small"><b>Employers to watch:</b> Coventry City Council, Severn Trent and Coventry Building Society, with NESO and National Gas in nearby Warwick.</p>
+      </article>
+      <article class="city-row">
+        <h3>Milton Keynes</h3>
+        <p class="stat">14th for job adverts per resident (1,558 per 10,000). 2.5% of local jobs are in tech, level with Glasgow, and Optisearch ranks it 12th.</p>
+        <p class="small"><b>From home:</b> around two hours by train, so you would need to move.</p>
+        <p class="small"><b>Employers to watch:</b> Santander, Network Rail, Red Bull Technology, Connells and Allica Bank.</p>
+      </article>
+    </div>
+    <p class="city-note">York and Chester also do well on adverts per resident (15th and 5th), but no suitable data role was open there when checked. Junior-labelled data roles are scarcer in these smaller cities, so roles asking for one or two years of experience are worth applying for too.</p>
+    <p class="fine">Tech share of jobs comes from the <a href="https://www.newsletter.co.uk/arts-and-culture/belfast-is-ninth-in-the-uk-for-tech-careers-new-study-finds-5490146" target="_blank" rel="noopener">Optisearch study (ONS data, January 2026)</a>. Adverts per resident come from a <a href="https://www.wigantoday.net/arts-and-culture/looking-for-work-wigan-ranks-above-london-manchester-and-birmingham-per-person-5628873" target="_blank" rel="noopener">Davies &amp; Associates study of Glassdoor listings (March 2026)</a>.</p>
+  </section>
+
+  <section class="controls" aria-label="Filter roles">
+    <div>
+      <p class="group-label" id="cities-label">Ten biggest UK tech cities</p>
+      <div class="chiprow" id="cities" role="group" aria-labelledby="cities-label"></div>
+    </div>
+    <div id="more-cities-wrap" hidden>
+      <p class="group-label" id="more-cities-label">Underrated cities</p>
+      <div class="chiprow" id="more-cities" role="group" aria-labelledby="more-cities-label"></div>
+    </div>
+    <div class="chiprow" role="tablist" aria-label="Role type">
+      <button class="pick tab" role="tab" type="button" data-type="all" aria-selected="true">All roles<span class="n" data-count="all"></span></button>
+      <button class="pick tab" role="tab" type="button" data-type="grad" aria-selected="false">Graduate roles<span class="n" data-count="grad"></span></button>
+      <button class="pick tab" role="tab" type="button" data-type="junior" aria-selected="false">Junior roles<span class="n" data-count="junior"></span></button>
+    </div>
+    <div class="filters">
+      <label class="search" for="q"><span class="sr">Search</span><input id="q" type="search" placeholder="Search employer, role or place" autocomplete="off"></label>
+      <label for="area-filter">Area
+        <select id="area-filter">
+          <option value="all">All areas</option>
+          <option value="da">Data analyst and BI</option>
+          <option value="ds">Data science, ML and engineering</option>
+          <option value="other">Other analyst roles</option>
+        </select>
+      </label>
+      <label for="start-filter">Start
+        <select id="start-filter">
+          <option value="all">Any start</option>
+          <option value="now">Could start now</option>
+          <option value="visa">After your visa application</option>
+          <option value="later">In 2027</option>
+        </select>
+      </label>
+      <label for="sort">Sort
+        <select id="sort">
+          <option value="deadline">Closing soonest</option>
+          <option value="priority">Priority</option>
+          <option value="city">City</option>
+          <option value="employer">Employer A to Z</option>
+        </select>
+      </label>
+      <label for="status-filter">Show
+        <select id="status-filter">
+          <option value="active">Hide rejected and not for me</option>
+          <option value="all">All statuses</option>
+          <option value="To apply">To apply</option>
+          <option value="Applied">Applied</option>
+          <option value="Assessment">Assessment</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Not for me">Not for me</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section id="list" class="list" aria-live="polite">
+    <div class="empty">
+      <p class="empty-title">Roles appear here</p>
+      <p>If this message stays, reload the page.</p>
+    </div>
+  </section>
+
+  <details class="fold" id="leftout">
+    <summary>Checked and left out</summary>
+    <p class="intro">These came up in the search but failed a check on 13 October, so you can skip them if you see them advertised.</p>
+    <ul class="leftout">
+      <li><b>Digital Futures, Data and AI Analyst (London):</b> needs a UK passport, settled status or indefinite leave to remain, and the training is unpaid.</li>
+      <li><b>Kubrick training programme:</b> hiring is paused.</li>
+      <li><b>CGI Technical Graduate, Data Analysis and Data Science 2027:</b> many roles need National Security Vetting with five to ten years of UK residence.</li>
+      <li><b>Unilever, Data Analyst, Safety, Health and Environment (Leeds):</b> the page showed 4 to 18 September, so it has probably closed.</li>
+      <li><b>Airbus, Supply Chain Data Analyst (Belfast):</b> closed.</li>
+      <li><b>GlobalData, AIG, Tetra Tech, Sphere and Royal London 2026 graduate data roles (London):</b> all closed.</li>
+      <li><b>Belfast City Council, Information and Data Analyst:</b> needs one to two years in each of three areas.</li>
+      <li><b>Hays for a food manufacturer, Data Analyst (Belfast):</b> needs a year as a data analyst, and the listing dates from July.</li>
+      <li><b>Standard Life, Major Shareholding Reporting Analyst (Edinburgh):</b> needs investment industry experience.</li>
+      <li><b>Exposed Solutions, Data Analyst for housing asset data (Salford):</b> needs housing survey data experience.</li>
+      <li><b>Greencore, Portfolio Analyst (Leeds):</b> needs commercial data experience.</li>
+      <li><b>University of Oxford, OCTRU Medical Statistician:</b> needs a postgraduate degree with medical statistics.</li>
+      <li><b>Ekimetrics, Junior Data Scientist (London):</b> already in your Data Job Hunt 2026 tracker.</li>
+      <li><b>Experian, Graduate Data Analyst (Nottingham):</b> the 2026 intake closed in June, and it needs the right to work for the whole programme with no sponsorship. Watch for the next intake.</li>
+      <li><b>Experian, Data Analyst (Nottingham):</b> expired.</li>
+      <li><b>Allica Bank, Graduate AI Engineer (Milton Keynes):</b> removed on 17 August.</li>
+      <li><b>Connells, Graduate Commercial Data Analyst (Milton Keynes):</b> needs two years of experience.</li>
+      <li><b>NEXT, eCommerce Data Analyst (Leicester):</b> needs proven commercial experience.</li>
+      <li><b>Holland &amp; Barrett, Commercial Stock Analyst (Nuneaton):</b> needs two to three years in analytics.</li>
+      <li><b>Coventry City Council, Data Analyst and Performance Analyst:</b> both closed.</li>
+      <li><b>Atominvest, Graduate Technical Product Analyst (London):</b> needs a permanent right to work and a year of experience.</li>
+      <li><b>Fospha, Junior Data Scientist (London):</b> asks for one to two years of commercial data science.</li>
+      <li><b>Procter &amp; Gamble, Consumer Insights &amp; Data Analytics Manager (Weybridge):</b> closed in August. P&amp;G says it will sponsor visas, so watch for the next round.</li>
+      <li><b>CDP, Associate Data Analyst (London) and Data Intellect Graduate Academy (Belfast):</b> both closed.</li>
+      <li><b>Falkirk Council, Data Analyst (Business Intelligence):</b> closed in April.</li>
+      <li><b>ITOL Recruit, Newto Training, IT Career Switch and Uptrail:</b> these sell training courses, so none of their adverts appear here.</li>
+    </ul>
+  </details>
+
+  <details class="fold add" id="add">
+    <summary>Add a role you found</summary>
+    <form id="add-form" autocomplete="off">
+      <label for="f-employer">Employer<input id="f-employer" name="employer" required maxlength="120"></label>
+      <label for="f-title">Role<input id="f-title" name="title" required maxlength="160"></label>
+      <label for="f-city">City<select id="f-city" name="city"></select></label>
+      <label for="f-location">Location<input id="f-location" name="location" maxlength="160"></label>
+      <label for="f-salary">Salary<input id="f-salary" name="salary" maxlength="80"></label>
+      <label for="f-deadline">Closing date<input id="f-deadline" name="deadline" type="date"></label>
+      <label for="f-type">Type
+        <select id="f-type" name="type">
+          <option value="grad">Graduate role</option>
+          <option value="junior">Junior role</option>
+        </select>
+      </label>
+      <label for="f-area">Area
+        <select id="f-area" name="area">
+          <option value="da">Data analyst and BI</option>
+          <option value="ds">Data science, ML and engineering</option>
+          <option value="other">Other analyst roles</option>
+        </select>
+      </label>
+      <label for="f-start">Start
+        <select id="f-start" name="startRule">
+          <option value="visa">Permanent: after your visa application</option>
+          <option value="now">Temporary or fixed-term: could start now</option>
+          <option value="later">Starts in 2027</option>
+        </select>
+      </label>
+      <label for="f-link" class="wide">Link to the listing<input id="f-link" name="link" type="url" placeholder="https://" maxlength="600"></label>
+      <label for="f-notes" class="wide">Notes<textarea id="f-notes" name="notes" rows="2" maxlength="800"></textarea></label>
+      <button type="submit">Add role</button>
+    </form>
+  </details>
+
+  <footer>
+    <p>The ten cities are the UK's largest tech hubs as ranked by the <a href="https://www.itjobboard.co.uk/blog/337/best-uk-cities-for-it-jobs-in-2026:-salaries,-demand-and-career-opportunities/" target="_blank" rel="noopener">IT Job Board 2026 guide</a> and an <a href="https://www.newsletter.co.uk/arts-and-culture/belfast-is-ninth-in-the-uk-for-tech-careers-new-study-finds-5490146" target="_blank" rel="noopener">Optisearch study reported in January 2026</a>. The five underrated cities use the studies named in that section.</p>
+    <p>Listings come from GRB, Bright Network, Gradcracker, Reed, CV-Library, Harnham, s1jobs, jobs.ac.uk and employer sites. Visa notes repeat what each listing says. Salaries and dates can change, so open the listing before you apply.</p>
+    <p>A third search on 13 October added Glasgow and more London roles. York and Chester still had no suitable openings.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="application/json" id="roles-data">[{"cities":["London"],"deadline":"2026-11-03","deadlineNote":"","posted":null,"rolling":false,"start":"ASAP","startRule":"visa","check":"Five office days a week.","visaNote":"","id":"grb-junior-da-soho","city":"London","type":"grad","area":"da","priority":"A","employer":"Graduate Recruitment Bureau for a data start-up","title":"Junior Data Analyst, Tech Startup","location":"Soho, central London · in the office five days a week","salary":"£35,000","terms":"Graduate job","fit":"Any degree grade, with maths and statistics named, and no experience asked for. Lead with the hermai.ai pipeline and your KSI model.","link":"https://www.grb.uk.com/graduate-jobs/junior-data-analyst-tech-startup-london-37791/","source":"GRB"},{"cities":["London"],"deadline":"2026-10-16","deadlineNote":"","posted":null,"rolling":false,"start":"26 October 2026","startRule":"visa","check":"The listed start is 26 October. If the job is permanent, ask to start once your Graduate visa application is in.","visaNote":"","id":"grb-commercial-watford","city":"London","type":"grad","area":"other","priority":"A","employer":"Graduate Recruitment Bureau for a specialist business","title":"Graduate Commercial Analyst","location":"Watford, Hertfordshire · fast trains from London Euston take about 20 minutes","salary":"£30,000 to £32,000","terms":"Graduate job","fit":"A 2:1 in a numerate subject and strong Excel. The work is pricing, margin, supplier and tender analysis, which suits your maths degree.","link":"https://www.grb.uk.com/graduate-jobs/graduate-commercial-analyst-watford-38043/","source":"GRB"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Not stated","startRule":"visa","check":"No salary or start date on the listing. A full UK driving licence is listed as desirable.","visaNote":"","id":"inpost-grad-data-ai","city":"London","type":"grad","area":"da","priority":"A","employer":"InPost","title":"Graduate Data Analytics & AI Partner","location":"London","salary":"Not stated","terms":"Graduate role for two years","fit":"Asks for a 2:1 in data science or maths plus SQL and Python, which is your exact mix. Power BI is on their wish list.","link":"https://www.brightnetwork.co.uk/graduate-jobs/inpost/graduate-data-analytics-ai-partner","source":"Bright Network"},{"cities":["London"],"deadline":"2026-10-15","deadlineNote":"","posted":"2026-10-08","rolling":false,"start":"Immediate","startRule":"visa","check":"Asks for six months or more in digital, media or marketing analysis.","visaNote":"","id":"grb-tv-media-response","city":"London","type":"grad","area":"da","priority":"B","employer":"Graduate Recruitment Bureau for a fundraising and marketing agency","title":"Junior TV & Digital Media Response Analyst","location":"Central London · hybrid","salary":"£33,000 to £38,000","terms":"Graduate job","fit":"Data science and maths are named courses and a 2:2 is enough. The core work is campaign analysis in Excel, with Power BI a plus.","link":"https://www.grb.uk.com/graduate-jobs/junior-tv-digital-media-response-analyst-london-37781/","source":"GRB"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"Salary not stated. The listing also asks for work with data pipelines and presenting insights.","visaNote":"","id":"analytic-partners-msa","city":"London","type":"junior","area":"ds","priority":"B","employer":"Analytic Partners","title":"Marketing Science Analyst","location":"London · hybrid","salary":"Not stated","terms":"Permanent","fit":"Open to recent graduates in statistics or maths. The firm builds marketing mix models, so your regression and time-series projects are the evidence.","link":"https://jobs.lever.co/analyticpartners/b86a9149-e7b3-4a50-a63f-1b96644625e1","source":"Analytic Partners careers"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"No salary, office pattern or closing date on the listing.","visaNote":"","id":"cushman-junior-ae","city":"London","type":"junior","area":"da","priority":"B","employer":"Cushman & Wakefield","title":"Junior Analytics Engineer","location":"London","salary":"Not stated","terms":"Not stated","fit":"Asks for a degree in maths or statistics, foundational SQL and some practical data or BI work. Your Databases module and the hermai.ai pipeline cover this.","link":"https://careers.cushmanwakefield.com/en/jobs/r324296/junior-analytics-engineer/","source":"Cushman & Wakefield careers"},{"cities":["London"],"deadline":"2026-10-14","deadlineNote":"","posted":"2026-10-10","rolling":false,"start":"Not stated","startRule":"visa","check":"They want SQL written from scratch, so point to your database coursework. The listing shows the range as £10,000 to £50,000.","visaNote":"","id":"livenation-bi","city":"London","type":"junior","area":"da","priority":"B","employer":"Live Nation","title":"Business Intelligence Analyst","location":"London · on site","salary":"Up to £50,000","terms":"Permanent","fit":"SQL queries and views behind Tableau dashboards. No years of experience are stated, and a strong wish to learn Tableau is accepted.","link":"https://www.reed.co.uk/jobs/business-intelligence-analyst/57436757","source":"Reed"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":"2026-09-18","rolling":false,"start":"Not stated","startRule":"visa","check":"Posted 18 September, so apply soon. The listing does not say whether Regal Brooke is the employer or an agency.","visaNote":"","id":"regalbrooke-grad-finance-da","city":"London","type":"grad","area":"other","priority":"B","employer":"Regal Brooke","title":"Graduate Finance Data Analyst, Commercial Lending","location":"London · hybrid","salary":"£38,000 to £44,000 plus bonus","terms":"Permanent","fit":"Graduate entry, with maths and data analytics both named and no industry experience needed. The work is lending data and company financials.","link":"https://www.reed.co.uk/jobs/graduate-finance-data-analyst--commercial-lending/57360684","source":"Reed"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":"2026-09-07","rolling":false,"start":"Not stated","startRule":"now","check":"Temporary with no length given. Posted 7 September.","visaNote":"","id":"fitz-investment-fund-da","city":"London","type":"grad","area":"da","priority":"B","employer":"Fitz Partners (RiskConcile Group)","title":"Investment Fund Data Analyst","location":"London · hybrid","salary":"Not stated","terms":"Temporary, full time","fit":"Asks for a bright graduate with a good degree in a mathematical subject. Fund data for asset managers, where accuracy matters most.","link":"https://www.reed.co.uk/jobs/investment-fund-data-analyst/57315830","source":"Reed"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Not stated","startRule":"visa","check":"The advert also mentions blockchain and funded qualifications. Read the contract for any minimum-service or repayment terms.","visaNote":"","id":"eachange-grad-da","city":"London","type":"grad","area":"da","priority":"B","employer":"EA Change","title":"Graduate Technical/Data Analyst","location":"London","salary":"£30,000","terms":"Graduate job","fit":"A 2:1 in a technical subject and no work experience needed. They want a clear interest in AI and machine learning, which your projects show.","link":"https://www.brightnetwork.co.uk/graduate-jobs/ea-change/graduate-technical-data-analyst-2026","source":"Bright Network"},{"cities":["London"],"deadline":"2026-11-25","deadlineNote":"","posted":null,"rolling":false,"start":"February 2027 cohort","startRule":"later","check":"Two years with a client is about the length of your Graduate visa, so ask how they handle that. Read the contract for any repayment terms.","visaNote":"","id":"sigmalabs-feb-2027","city":"London","type":"grad","area":"da","priority":"B","employer":"Sigma Labs","title":"Data Consultant Graduate Programme, February 2027","location":"Training in London or remote, then client sites across the UK","salary":"£30,000 in year one, £38,000 in year two","terms":"15 weeks of training, then two years with a client","fit":"Any degree and no technical experience needed, so your MSc puts you ahead of most applicants. A February start fits your timeline.","link":"https://www.brightnetwork.co.uk/graduate-jobs/sigma-labs/data-consultant-graduate-programme-february-2027","source":"Bright Network"},{"cities":["London"],"deadline":"2026-10-22","deadlineNote":"","posted":"2026-10-02","rolling":false,"start":"ASAP","startRule":"visa","check":"The starting salary may be under £30,000.","visaNote":"","id":"grb-advertising-insight","city":"London","type":"grad","area":"other","priority":"C","employer":"Graduate Recruitment Bureau for a radio advertising body","title":"Graduate Advertising Insight Executive","location":"London · hybrid","salary":"£27,000 to £30,000 plus bonus","terms":"Graduate job","fit":"A 2:1, intermediate Excel and no experience asked for. It is research and insight work on audiences and advertising.","link":"https://www.grb.uk.com/graduate-jobs/graduate-advertising-insight-executive-london-37987/","source":"GRB"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Immediate","startRule":"now","check":"Salary not stated.","visaNote":"Says candidates must hold the right to work in the UK.","id":"tcs-ai-strategy","city":"London","type":"junior","area":"other","priority":"C","employer":"Tata Consultancy Services (TCS)","title":"AI Strategy Associate (Junior)","location":"West Drayton, west London · hybrid","salary":"Not stated","terms":"18-month fixed term, meant to lead to a permanent role","fit":"Wants a master's and someone who can build a business case from scratch. Your MSc qualifies, though the role leans towards commercial modelling and consulting.","link":"https://www.gradcracker.com/hub/727/tata-consultancy-services-tcs/graduate-job/83865/ai-strategy-associate-junior","source":"Gradcracker"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":"2026-09-14","rolling":false,"start":"Not stated","startRule":"visa","check":"The agency does not name the employer, and it runs the same advert in Glasgow and Shropshire at different salaries. Ask who the employer is before you share anything beyond your CV.","visaNote":"","id":"consula-grad-da","city":"London","type":"grad","area":"da","priority":"C","employer":"Consula Group for an unnamed London business","title":"Graduate Data Analyst","location":"London · on site","salary":"£45,000 (another board shows £48,000 to £52,000)","terms":"Permanent","fit":"A numerate degree and strong Excel, with SQL, Python or R training given. On paper it is a strong match.","link":"https://www.reed.co.uk/jobs/graduate-data-analyst/57308695","source":"Reed"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":"2026-10-10","rolling":false,"start":"Not stated","startRule":"visa","check":"Half of the role is helpdesk support, and the hours are 6am to 2.30pm.","visaNote":"","id":"sagacity-junior-de","city":"London","type":"junior","area":"ds","priority":"C","employer":"Sagacity","title":"Junior Data Engineer","location":"London · hybrid","salary":"Not stated","terms":"Permanent","fit":"SQL, Python and pipeline tools such as Airflow. Your Docker and GitHub Actions work on hermai.ai is relevant.","link":"https://www.reed.co.uk/jobs/junior-data-engineer/57442969","source":"Reed"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"","visaNote":"","id":"evergreen-grad-da","city":"Manchester","type":"grad","area":"da","priority":"A","employer":"Evergreen Life","title":"Data Analyst Graduate","location":"Manchester · in the office three days a week","salary":"£30,000","terms":"Permanent","fit":"Written for a recent graduate in maths, statistics or data analytics, as an entry-level development role. Strong Excel with formulas and pivot tables is the main skill asked for.","link":"https://careers.evergreen-life.co.uk/job/data-analyst-graduate/1564","source":"Evergreen Life careers"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"","visaNote":"","id":"harnham-grad-insights","city":"Manchester","type":"grad","area":"da","priority":"A","employer":"Harnham for a large financial services firm","title":"Graduate Insights Analyst","location":"Manchester · hybrid, two office days rising to three","salary":"£30,000","terms":"Permanent","fit":"A numerical degree, some coding (Python preferred, R accepted) and clear reasoning. They say logical thinking matters more than advanced coding.","link":"https://www.harnham.com/?p=198754","source":"Harnham"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":"2026-09-25","rolling":false,"start":"2 November 2026","startRule":"now","check":"Paid hourly through the agency.","visaNote":"","id":"adecco-grad-ci","city":"Manchester","type":"grad","area":"da","priority":"A","employer":"Adecco for an energy company","title":"Graduate Continuous Improvement Analyst","location":"Manchester · three days a week on site","salary":"£18 to £22 an hour","terms":"12-month contract, likely to extend","fit":"For graduates or junior analysts with a 2:1, Excel and clear communication. The work is forecasting tools, dashboards and operational data.","link":"https://www.cv-library.co.uk/job/225653848/graduate-continuous-improvement-analyst","source":"CV-Library"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":"2026-10-08","rolling":false,"start":"Not stated","startRule":"visa","check":"The salary may start below £30,000.","visaNote":"","id":"agility-grad-group-da","city":"Manchester","type":"grad","area":"da","priority":"B","employer":"Agility for a PLC","title":"Graduate Group Data Analyst","location":"Manchester · hybrid with flexitime","salary":"£27,000 to £30,000","terms":"Permanent","fit":"A 2:1 in a numeric degree with strong Excel. SQL, Python and Power BI are listed as a big plus, and you have all three.","link":"https://www.reed.co.uk/jobs/graduate-group-data-analyst/57430559","source":"Reed"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":"2026-10-01","rolling":false,"start":"Not stated","startRule":"now","check":"Ask to be paid through PAYE and tell the agency your visa dates before you accept.","visaNote":"","id":"belcan-junior-commercial","city":"Manchester","type":"junior","area":"other","priority":"B","employer":"Belcan for an unnamed client","title":"Junior Commercial Analyst","location":"Manchester · hybrid","salary":"£14 to £19 an hour PAYE (£20 to £25 through an umbrella company)","terms":"12-month rolling contract","fit":"A degree and strong Excel for modelling and forecasting. The work is tender reviews and cost build-ups.","link":"https://www.reed.co.uk/jobs/junior-commercial-analyst/57407697","source":"Reed"},{"cities":["Manchester"],"deadline":null,"deadlineNote":"","posted":"2026-09-21","rolling":false,"start":"Not stated","startRule":"visa","check":"They want a couple of years of commercial data experience.","visaNote":"","id":"cathcart-da","city":"Manchester","type":"junior","area":"da","priority":"C","employer":"Cathcart Technology for a digital business","title":"Data Analyst","location":"Greater Manchester · two to three days on site","salary":"£38,000 to £45,000","terms":"Permanent","fit":"Good SQL is the main ask, and they say you need not be an expert in every area.","link":"https://www.cv-library.co.uk/job/225628966/data-analyst","source":"CV-Library"},{"cities":["Leeds"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Ongoing intake","startRule":"visa","check":"Apply through TestGorilla with a CV and covering letter. The firm says it may reject AI-written applications, so write the letter yourself.","visaNote":"","id":"bluesmith-grad-de","city":"Leeds","type":"grad","area":"ds","priority":"A","employer":"Bluesmith Information Systems","title":"Graduate Data Engineer","location":"Leeds","salary":"Not stated (competitive, with profit share after training)","terms":"Training programme, then a permanent job","fit":"A 2:1 in maths or statistics and basic programming in any language. They train you with a mentor and then offer a full-time job with a share of profits.","link":"https://www.gradcracker.com/hub/881/bluesmith-information-systems/graduate-job/32848/graduate-data-engineer","source":"Gradcracker"},{"cities":["Leeds"],"deadline":null,"deadlineNote":"","posted":"2026-10-08","rolling":false,"start":"ASAP","startRule":"now","check":"Asks for previous work with high volumes of data. At full-time hours the pay comes to about £29,000 to £30,000 a year.","visaNote":"","id":"rullion-da-leeds","city":"Leeds","type":"junior","area":"da","priority":"B","employer":"Rullion for an operations team","title":"Data Analyst","location":"Leeds · two office days a week","salary":"£15.23 an hour","terms":"6-month contract","fit":"Data matching, validation and reconciliation in Excel, with an immediate start on offer.","link":"https://www.cv-library.co.uk/job/225677903/data-analyst","source":"CV-Library"},{"cities":["Birmingham"],"deadline":null,"deadlineNote":"","posted":"2026-09-28","rolling":false,"start":"Not stated","startRule":"visa","check":"","visaNote":"","id":"rise-monitoring-da","city":"Birmingham","type":"junior","area":"da","priority":"A","employer":"Rise Technical Recruitment for a solar farm operator","title":"Monitoring and Data Analyst (Renewable Energy)","location":"Birmingham","salary":"£30,000 to £35,000","terms":"Permanent","fit":"Advanced Excel on large datasets is the main requirement. Solar experience is only a bonus, and no degree or years are asked for.","link":"https://www.cv-library.co.uk/job/225655322/monitoring-and-data-analyst-renewable-energy","source":"CV-Library"},{"cities":["Birmingham","Bristol","Derby"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Joins throughout the year","startRule":"visa","check":"Some client work needs National Security Vetting, which usually asks for years of UK residence. Ask early which level your work would need.","visaNote":"","id":"quickrelease-grad-analyst","city":"Birmingham","type":"grad","area":"other","priority":"B","employer":"Quick Release","title":"Graduate Analyst","location":"Derby, Birmingham, Bristol or Basildon · client sites up to five days a week","salary":"£33,000","terms":"Graduate job","fit":"A first or high 2:1 in any subject. Product data consultancy for engineering clients, and the Derby office is close to Nottingham.","link":"https://www.brightnetwork.co.uk/graduate-jobs/quick-release_/graduate-analyst-intake-derby-2026-aovn","source":"Bright Network"},{"cities":["Birmingham"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"ASAP, or any date up to the end of 2026","startRule":"visa","check":"Asks for AAB at A level with an A in maths. Give your Class 12 results and the INSPIRE award so they can compare.","visaNote":"Says it cannot sponsor visas. Your Graduate visa needs no sponsor.","id":"acturis-grad-tba","city":"Birmingham","type":"grad","area":"other","priority":"B","employer":"Acturis","title":"Graduate Technical Business Analyst","location":"Birmingham","salary":"Not stated","terms":"Graduate job","fit":"A 2:1 in a STEM subject, with ASAP starts on offer. The work is specifying insurance software, more systems than analytics.","link":"https://www.acturis.com/jobs/graduate-technical-business-analyst-birmingham/","source":"Acturis careers"},{"cities":["Birmingham"],"deadline":null,"deadlineNote":"","posted":"2026-09-23","rolling":false,"start":"Not stated","startRule":"visa","check":"Asks for proven market intelligence experience, so treat it as a stretch.","visaNote":"","id":"experis-market-insight","city":"Birmingham","type":"junior","area":"da","priority":"C","employer":"Experis for a university","title":"Market Insight and Data Analyst","location":"Birmingham · three days on site","salary":"£38,050 to £44,131","terms":"Permanent","fit":"SQL, Python or R, and Power BI dashboards for a university's market intelligence team.","link":"https://www.cv-library.co.uk/job/225640908/market-insight-and-data-analyst","source":"CV-Library"},{"cities":["Bristol"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"now","check":"Found on Jooble. Search the title on OVO's own careers site to apply direct. Some customer contact is part of the role.","visaNote":"","id":"ovo-renewable-ops","city":"Bristol","type":"junior","area":"da","priority":"A","employer":"OVO Energy","title":"Renewable Energy Operations Analyst","location":"Bristol · hybrid","salary":"£34,100 to £36,000 plus bonus","terms":"12-month fixed term","fit":"Reporting and KPI analysis for export customers, with SQL highly desirable. No degree or years are asked for.","link":"https://uk.jooble.org/jdp/1603087696908541763","source":"Jooble"},{"cities":["Oxford"],"deadline":"2026-10-14","deadlineNote":"jobs.ac.uk says 12 noon on 14 October. The university's own vacancy page says 19 October. Aim for the earlier date.","posted":"2026-09-30","rolling":false,"start":"Not stated","startRule":"now","check":"Short notice, and interviews follow soon after the closing date.","visaNote":"","id":"oxford-omi-ra","city":"Oxford","type":"junior","area":"ds","priority":"A","employer":"University of Oxford, Oxford-Man Institute","title":"Research Assistant in Machine Learning and Quantitative Finance","location":"Oxford","salary":"£35,681 to £41,636","terms":"12-month fixed term","fit":"A degree in maths or statistics plus research experience. Your MSc projects, such as the KSI model with nested cross-validation, are the evidence.","link":"https://www.jobs.ac.uk/job/DTC604/","source":"jobs.ac.uk"},{"cities":["Oxford"],"deadline":"2026-11-08","deadlineNote":"May close early if they get many applications.","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"Start date not stated, so ask whether it begins before September 2027.","visaNote":"","id":"ukaea-grad-ke","city":"Oxford","type":"grad","area":"ds","priority":"B","employer":"UK Atomic Energy Authority","title":"Graduate Knowledge Engineer","location":"Culham, Oxfordshire · hybrid","salary":"£35,227","terms":"Graduate job","fit":"For 2025 to 2027 graduates in maths or computer science. The work is AI-based data and knowledge management for fusion research.","link":"https://www.gradcracker.com/hub/1147/uk-atomic-energy-authority/graduate-job/85659/graduate-knowledge-engineer","source":"Gradcracker"},{"cities":["Cambridge"],"deadline":null,"deadlineNote":"","posted":"2026-09-29","rolling":false,"start":"Immediate","startRule":"now","check":"Asks for previous analyst experience. Present the hermai.ai project as client analysis work.","visaNote":"","id":"osborne-associate-da","city":"Cambridge","type":"junior","area":"da","priority":"B","employer":"Osborne Appointments for an unnamed client","title":"Associate Data Analyst","location":"Near Cambridge · hybrid possible","salary":"£30,000 to £38,000 pro rata","terms":"6-month contract","fit":"Power BI reports and dashboards on market and customer data, on a contract you could start straight away.","link":"https://www.cv-library.co.uk/job/225663737/associate-data-analyst","source":"CV-Library"},{"cities":["Cambridge"],"deadline":null,"deadlineNote":"","posted":"2026-09-24","rolling":false,"start":"Not stated","startRule":"visa","check":"No salary or level given, so ask before you spend time on it.","visaNote":"","id":"evera-ds-foxton","city":"Cambridge","type":"junior","area":"ds","priority":"B","employer":"Evera Recruitment for an unnamed client","title":"Data Scientist","location":"Foxton, near Cambridge","salary":"Not stated","terms":"Permanent","fit":"Python, data pipelines, statistics or machine learning, and Git. No years are stated, and your projects cover each point.","link":"https://www.cv-library.co.uk/job/225648296/data-scientist","source":"CV-Library"},{"cities":["Edinburgh"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Not stated","startRule":"visa","check":"The window stays open until the cohort is full. No start date is given, so ask when it begins.","visaNote":"","id":"natwest-risk-modelling","city":"Edinburgh","type":"grad","area":"ds","priority":"B","employer":"NatWest Group","title":"Graduate Trainee, Risk Modelling Specialist","location":"Edinburgh · hybrid","salary":"£37,500","terms":"Two-year programme with three rotations","fit":"A 2:1 in a numerical STEM subject, plus statistics and some programming. Risk modelling suits your maths and machine learning background.","link":"https://www.gradcracker.com/hub/233/natwest-group/graduate-job/84493/graduate-trainee-risk-modelling-specialist","source":"Gradcracker"},{"cities":["Edinburgh"],"deadline":null,"deadlineNote":"","posted":"2026-09-26","rolling":false,"start":"Not stated","startRule":"now","check":"The salary is on Baillie Gifford's own site. Posted 26 September.","visaNote":"","id":"bailliegifford-dmo","city":"Edinburgh","type":"junior","area":"da","priority":"B","employer":"Baillie Gifford","title":"Data Management Operations Analyst","location":"Edinburgh · on site","salary":"Not stated on the listing","terms":"13-month fixed term","fit":"Market data quality checks, governance and operational reporting, with training and coaching. Power BI and Power Apps are listed as a plus.","link":"https://www.s1jobs.com/job/data-management-operations-analyst-13-month-fixed-127467858","source":"s1jobs"},{"cities":["Belfast"],"deadline":null,"deadlineNote":"","posted":"2026-09-01","rolling":false,"start":"Not stated","startRule":"visa","check":"Posted 1 September, so it may close soon. Banking operations experience is preferred.","visaNote":"","id":"citi-crr-entry","city":"Belfast","type":"junior","area":"da","priority":"B","employer":"Citi","title":"Client Asset and Regulatory Reporting Analyst, Entry Level","location":"Belfast · hybrid","salary":"Not stated","terms":"Full time","fit":"An entry-level reporting role: monthly client money returns and MIS reports, with data analysis as a listed skill.","link":"https://jobs.citi.com/job/belfast/client-asset-and-regulatory-reporting-analyst-entry-level/287/100035318544","source":"Citi careers"},{"cities":["London"],"deadline":null,"deadlineNote":"","posted":"2026-10-04","rolling":false,"start":"Not stated","startRule":"visa","check":"The link opens a plain-text copy of the advert, so use its Apply link. No closing date is shown.","visaNote":"","id":"immediate-media-junior-da","city":"London","type":"junior","area":"da","priority":"A","employer":"Immediate Media","title":"Junior Data Analyst","location":"London · hybrid, early finish on Fridays","salary":"Up to £35,000","terms":"Full time","fit":"Audience, product and commercial analysis with SQL, GA4 and dashboards. They ask for an analytical foundation from study or early work, which your MSc covers.","link":"https://jobs.workable.com/jobs/24a19b79-114a-41a3-aa3e-3df17d2b98d2.md","source":"Workable"},{"cities":["London","Glasgow","Manchester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Not stated","startRule":"visa","check":"No start date or salary on the listing. Ask about intake dates and whether any client work needs security clearance.","visaNote":"","id":"capgemini-accelerate","city":"London","type":"grad","area":"other","priority":"B","employer":"Capgemini Engineering","title":"Accelerate Graduate Programme, Intelligent Industries","location":"London, Glasgow or Manchester","salary":"Not stated","terms":"Graduate programme of about 20 months, from Associate Consultant to Consultant","fit":"A 2:2 or above is enough, and data analysis is one of the listed skills. Gradcracker also lists a London pathway for enterprise data and analytics.","link":"https://www.gradcracker.com/hub/368/capgemini-engineering/graduate-job/84804/accelerate-graduate-programme-intelligent-industries","source":"Gradcracker"},{"cities":["London","Manchester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":true,"start":"Not stated","startRule":"visa","check":"It is closer to consulting and low-code building than to data analysis. A 2:1 is preferred.","visaNote":"","id":"reply-power-platform","city":"London","type":"grad","area":"other","priority":"C","employer":"Reply","title":"Graduate Power Platform Consultant","location":"London or Manchester","salary":"Not stated","terms":"Graduate job","fit":"Microsoft Power Apps, Power Automate and AI tools for client processes. Your Power BI work sits in the same Microsoft family.","link":"https://www.gradcracker.com/hub/691/reply/graduate-job/82064/graduate-power-platform-consultant","source":"Gradcracker"},{"cities":["Glasgow"],"deadline":null,"deadlineNote":"The advert expires within three weeks of 13 October, so apply soon.","posted":"2026-10-03","rolling":false,"start":"Not stated","startRule":"visa","check":"The advert does not name the office. Glassdoor lists it under Glasgow and Ofgem also has a London office, so ask which applies. Basic security checks are needed.","visaNote":"Open to Commonwealth nationals with the right to work in the UK, which includes you.","id":"ofgem-analyst-bi","city":"Glasgow","type":"junior","area":"da","priority":"A","employer":"Ofgem","title":"Analyst, Business Intelligence (Retail Compliance)","location":"Glasgow · one office day a week","salary":"£35,232 to £48,561","terms":"Permanent, two roles","fit":"Analysis of large datasets for the energy regulator, with Python, Excel and Power BI listed as desirable. Willingness to learn is accepted.","link":"https://www.jobsgopublic.com/job/analyst-82961","source":"Jobs Go Public"},{"cities":["Coventry"],"deadline":"2026-10-16","deadlineNote":"Assessment day and interview on 9 November.","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"Asks for experience in an analytical or performance reporting role. Present your hermai.ai client project and Sparks Foundation internship as that experience.","visaNote":"Says it does not offer sponsorship. Your Graduate visa needs none.","id":"coventry-council-bi-insights","city":"Coventry","type":"junior","area":"da","priority":"B","employer":"Coventry City Council","title":"Business Intelligence and Insights Analyst","location":"Coventry city centre (One Friargate)","salary":"£34,811 to £41,177","terms":"Permanent","fit":"Power BI and SQL with a relevant degree, in a city where fewer graduates compete. Interviews in early November fit your timeline.","link":"https://careers.coventry.gov.uk/jobs/job/Business-Intelligence-and-Insights-Analyst/13425","source":"Coventry City Council careers"},{"cities":["Coventry"],"deadline":null,"deadlineNote":"","posted":"2026-10-13","rolling":false,"start":"Not stated","startRule":"now","check":"Asks for proven BI or reporting experience, and a basic DBS check. Essential Employment advertises what looks like the same role at £17.47 an hour, so apply through one agency only.","visaNote":"","id":"invitise-bi-insight-coventry","city":"Coventry","type":"junior","area":"da","priority":"C","employer":"Invitise for a public sector organisation","title":"BI & Insight Analyst / Data Analyst","location":"Coventry · two office days a week","salary":"£160 a day","terms":"2-month temporary contract, may extend","fit":"Power BI dashboards, SQL and data quality work, on a short contract you could start now.","link":"https://uk.jooble.org/jdp/-7617711360551987750","source":"Jooble"},{"cities":["Coventry","Manchester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"now","check":"No posting date is shown and the society may close it early. It asks for experience in analytics or BI.","visaNote":"","id":"cbs-data-bi-ftc","city":"Coventry","type":"junior","area":"da","priority":"C","employer":"Coventry Building Society","title":"Data Analytics & BI Specialist","location":"Coventry or Manchester · at least one office day a week","salary":"Not stated","terms":"12-month fixed term","fit":"SQL with Power BI or Cognos in a building society's data team. A degree in maths or statistics is listed as helpful.","link":"https://gorodeo.app/job/data-analytics-bi-specialist-12-month-ftc-7P-A_-GiS-shWM13dZb7Vg","source":"Rodeo"},{"cities":["Milton Keynes"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"The advert shows no posting date, so ask the agency whether it is still open before you spend time on it.","visaNote":"","id":"opus-grad-da-mk","city":"Milton Keynes","type":"grad","area":"da","priority":"B","employer":"Opus Recruitment Solutions for a global consultancy","title":"Graduate Data Analyst","location":"Milton Keynes · in the office on Mondays and Fridays","salary":"Up to £33,000 plus bonus","terms":"Graduate job","fit":"A STEM degree with SQL or Python, and a route to consultant within 12 months.","link":"https://www.itjobswatch.co.uk/jv/Opus-Recruitment-Solutions-Ltd/Graduate-Data-Analyst-Fast-track-your-career-to-consultant-in-12-months-Job-Milton-Keynes-Buckinghamshire-England-UK-4tvlgn","source":"IT Jobs Watch"},{"cities":["Leicester"],"deadline":null,"deadlineNote":"","posted":null,"rolling":false,"start":"Not stated","startRule":"visa","check":"No salary or posting date. The same agency's Manchester graduate role pays £27,000 to £30,000.","visaNote":"","id":"agility-grad-da-leicester","city":"Leicester","type":"grad","area":"da","priority":"C","employer":"Agility Resourcing for data businesses around Leicester","title":"Graduate Data Analyst","location":"Leicester","salary":"Not stated","terms":"Permanent","fit":"A 2:1 in a numeric degree and strong Excel, with SQL, R or Python as a plus. That matches your profile closely.","link":"https://www.itjobswatch.co.uk/jv/Agility-Resoucing/Graduate-Data-Analyst-Job-Leicester-Leicestershire-UK-4tfcrc","source":"IT Jobs Watch"},{"cities":["Leicester"],"deadline":null,"deadlineNote":"","posted":"2026-09-19","rolling":false,"start":"Not stated","startRule":"visa","check":"Asks for one to two years in an analyst role. NEXT ran a Graduate Credit & Risk Analyst scheme in spring 2026, so watch its careers site.","visaNote":"","id":"next-credit-risk-leicester","city":"Leicester","type":"junior","area":"other","priority":"C","employer":"NEXT","title":"Credit Risk Analyst","location":"Leicester head office · hybrid","salary":"About £35,000","terms":"Not stated","fit":"SQL-based credit risk analysis in a large retailer's finance team, tagged as a junior role. Python and Power BI are a bonus.","link":"https://builtinlondon.uk/job/credit-risk-analyst/11134712","source":"Built In"}]</script>
+<script>
+(function () {
+  var STATUSES = ["To apply", "Applied", "Assessment", "Interview", "Offer", "Rejected", "Not for me"];
+  var TYPE_LABEL = { grad: "Graduate role", junior: "Junior role" };
+  var AREA_LABEL = { da: "Data analyst and BI", ds: "Data science, ML and engineering", other: "Other analyst role" };
+  var PRIORITY = { A: { label: "Apply first", rank: 0 }, B: { label: "Worth applying", rank: 1 }, C: { label: "Long shot", rank: 2 } };
+  var CITY_ORDER = ["London", "Manchester", "Birmingham", "Leeds", "Bristol", "Edinburgh", "Glasgow", "Cambridge", "Oxford", "Belfast"];
+  var UNDERRATED = ["Nottingham", "Derby", "Leicester", "Coventry", "Milton Keynes"];
+  var MORE_LABEL = "Underrated cities";
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var CLOSED_STATUSES = ["Rejected", "Not for me"];
+  var IN_PROGRESS = ["Applied", "Assessment", "Interview"];
+  var LS_PROGRESS = "rr2026.progress.v1";
+  var LS_ADDED = "rr2026.added.v1";
+  var WINDOW_START = new Date(2026, 9, 1);
+  var WINDOW_END = new Date(2027, 1, 28);
+
+  var BASE = [];
+  try { BASE = JSON.parse(document.getElementById("roles-data").textContent) || []; } catch (e) { BASE = []; }
+
+  function lsRead(key, fallback) {
+    try { var v = window.localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  function lsWrite(key, value) {
+    try { window.localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+  }
+  var localOK = lsWrite("rr2026.probe", 1);
+
+  var listEl = document.getElementById("list");
+  var tallyEl = document.getElementById("tally");
+  var toastEl = document.getElementById("toast");
+  var citiesEl = document.getElementById("cities");
+  var moreWrap = document.getElementById("more-cities-wrap");
+  var moreEl = document.getElementById("more-cities");
+  var state = { type: "all", city: "all", area: "all", start: "all", q: "", sort: "deadline", status: "active" };
+  var localProgress = lsRead(LS_PROGRESS, {}) || {};
+  var localAdded = lsRead(LS_ADDED, []) || [];
+  var remoteProgress = {};
+  var remoteAdded = [];
+  var db = null;
+  var dbState = "connecting";
+  var pending = false;
+  var openNotes = {};
+  var toastTimer = null;
+  var noteTimers = {};
+  var inflight = {};
+  var again = {};
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function safeUrl(u) {
+    try { var x = new URL(String(u || "")); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : ""; }
+    catch (e) { return ""; }
+  }
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function today() { var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function parseISO(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
+    var p = String(iso).split("-").map(Number);
+    return new Date(p[0], p[1] - 1, p[2]);
+  }
+  function dayDiff(iso) { var t = parseISO(iso); return t ? Math.round((t - today()) / 86400000) : null; }
+  function isLocalId(id) { return /^local-/.test(String(id)); }
+  function citiesOf(r) {
+    var list = Array.isArray(r.cities) && r.cities.length ? r.cities.slice() : [];
+    if (r.city && list.indexOf(r.city) < 0) list.unshift(r.city);
+    return list.length ? list : ["Other"];
+  }
+
+  function progressFor(id) {
+    if (remoteProgress[id]) return remoteProgress[id];
+    return localProgress[id] || null;
+  }
+
+  function roles() {
+    var seen = {};
+    var addedAll = remoteAdded.concat(localAdded).filter(function (r) {
+      if (!r || !r.id || seen[r.id]) return false;
+      seen[r.id] = true;
+      return true;
+    });
+    return BASE.concat(addedAll).map(function (r) {
+      var p = progressFor(r.id) || {};
+      return Object.assign({}, r, {
+        status: STATUSES.indexOf(p.status) >= 0 ? p.status : "To apply",
+        myNotes: typeof p.myNotes === "string" ? p.myNotes : ""
+      });
+    });
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+  }
+
+  function saveWhere() {
+    if (dbState === "on") return "Saved";
+    return localOK ? "Saved on this device" : "Not saved: this view blocks storage";
+  }
+
+  function startInfo(r) {
+    if (r.startRule === "now") return { label: "Could start now", tone: "good" };
+    if (r.startRule === "later") return { label: r.start && r.start !== "Not stated" ? r.start : "Starts in 2027", tone: "soon" };
+    return { label: "After your visa application", tone: "info" };
+  }
+
+  function ticketFor(r) {
+    var left = dayDiff(r.deadline);
+    if (left !== null) {
+      var t = parseISO(r.deadline);
+      var tone = "calm", cap;
+      if (left < 0) { tone = "past"; cap = "Closed"; }
+      else if (left === 0) { tone = "urgent"; cap = "Closes today"; }
+      else if (left === 1) { tone = "urgent"; cap = "1 day left"; }
+      else if (left <= 7) { tone = "urgent"; cap = left + " days left"; }
+      else if (left <= 21) { tone = "soon"; cap = left + " days left"; }
+      else { cap = left + " days left"; }
+      return { tone: tone, day: String(t.getDate()), mon: MONTHS[t.getMonth()], cap: cap };
+    }
+    if (r.rolling) return { tone: "calm", day: "", mon: "Rolling", cap: "apply early" };
+    var ago = r.posted ? -dayDiff(r.posted) : null;
+    var capText = ago === null ? "no closing date" : ago <= 0 ? "posted today" : ago === 1 ? "posted yesterday" : "posted " + ago + " days ago";
+    return { tone: "calm", day: "", mon: "Open", cap: capText };
+  }
+
+  function bucket(r) {
+    var left = dayDiff(r.deadline);
+    if (left === null) return 1;
+    return left < 0 ? 2 : 0;
+  }
+  function priRank(r) { return (PRIORITY[r.priority] || PRIORITY.B).rank; }
+  function postedAgo(r) { var d = dayDiff(r.posted); return d === null ? 9999 : -d; }
+  function cityRank(r) {
+    var i = CITY_ORDER.indexOf(r.city);
+    if (i >= 0) return i;
+    var u = UNDERRATED.indexOf(r.city);
+    return u >= 0 ? 20 + u : 99;
+  }
+
+  function byDeadline(a, b) {
+    var ba = bucket(a), bb = bucket(b);
+    if (ba !== bb) return ba - bb;
+    if (ba === 0) return dayDiff(a.deadline) - dayDiff(b.deadline);
+    if (ba === 2) return dayDiff(b.deadline) - dayDiff(a.deadline);
+    var pr = priRank(a) - priRank(b);
+    if (pr) return pr;
+    return postedAgo(a) - postedAgo(b);
+  }
+  function compare(a, b) {
+    if (state.sort === "employer") {
+      return String(a.employer || "").localeCompare(String(b.employer || ""), "en-GB") || String(a.title || "").localeCompare(String(b.title || ""), "en-GB");
+    }
+    if (state.sort === "priority") {
+      var p = priRank(a) - priRank(b);
+      if (p) return p;
+    }
+    if (state.sort === "city") {
+      var c = cityRank(a) - cityRank(b);
+      if (c) return c;
+      var cn = String(a.city || "").localeCompare(String(b.city || ""), "en-GB");
+      if (cn) return cn;
+    }
+    return byDeadline(a, b);
+  }
+
+  function statusOK(r) {
+    if (state.status === "active") return CLOSED_STATUSES.indexOf(r.status) < 0;
+    if (state.status === "all") return true;
+    return r.status === state.status;
+  }
+
+  function matches(r, ignore) {
+    ignore = ignore || {};
+    if (!ignore.type && state.type !== "all" && r.type !== state.type) return false;
+    if (!ignore.city && state.city !== "all" && citiesOf(r).indexOf(state.city) < 0) return false;
+    if (state.area !== "all" && AREA_LABEL[r.area] && r.area !== state.area) return false;
+    if (state.start !== "all" && (r.startRule || "visa") !== state.start) return false;
+    if (!statusOK(r)) return false;
+    if (state.q) {
+      var hay = [r.employer, r.title, r.location, citiesOf(r).join(" ")].join(" ").toLowerCase();
+      if (hay.indexOf(state.q) < 0) return false;
+    }
+    return true;
+  }
+
+  function rowHTML(r) {
+    var tk = ticketFor(r);
+    var pri = PRIORITY[r.priority] || PRIORITY.B;
+    var st = startInfo(r);
+    var link = safeUrl(r.link);
+    var done = CLOSED_STATUSES.indexOf(r.status) >= 0;
+    var cs = citiesOf(r);
+    var cityText = cs[0] + (cs.length > 1 ? " +" + (cs.length - 1) : "");
+    var options = STATUSES.map(function (s) {
+      return '<option value="' + esc(s) + '"' + (s === r.status ? " selected" : "") + ">" + esc(s) + "</option>";
+    }).join("");
+    var meta = [];
+    if (r.location) meta.push("<span>" + esc(r.location) + "</span>");
+    if (r.salary) meta.push('<span class="sal">' + esc(r.salary) + "</span>");
+    if (r.terms) meta.push("<span>" + esc(r.terms) + "</span>");
+    var titleHTML = link
+      ? '<a href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(r.title) + "</a>"
+      : esc(r.title);
+    var idAttr = esc(r.id);
+    return '' +
+      '<article class="role' + (done ? " is-done" : "") + '" data-id="' + idAttr + '">' +
+        '<div class="ticket tone-' + tk.tone + '" aria-label="' + esc(cityText + ", " + (tk.day ? tk.day + " " + tk.mon : tk.mon) + ", " + tk.cap) + '">' +
+          '<span class="t-city">' + esc(cityText) + "</span>" +
+          (tk.day ? '<span class="t-day">' + esc(tk.day) + "</span>" : "") +
+          '<span class="t-mon">' + esc(tk.mon) + "</span>" +
+          '<span class="t-cap">' + esc(tk.cap) + "</span>" +
+        "</div>" +
+        '<div class="role-main">' +
+          '<p class="employer"><span>' + esc(r.employer) + '</span><span class="kind">' + esc(TYPE_LABEL[r.type] || "") + "</span></p>" +
+          '<h3 class="title">' + titleHTML + "</h3>" +
+          (meta.length ? '<p class="meta">' + meta.join("") + "</p>" : "") +
+          (r.fit ? '<p class="fit">' + esc(r.fit) + "</p>" : "") +
+          (r.start && r.start !== "Not stated" ? '<p class="small"><b>Start:</b> ' + esc(r.start) + "</p>" : "") +
+          (r.deadlineNote ? '<p class="small"><b>Closing:</b> ' + esc(r.deadlineNote) + "</p>" : "") +
+          (r.check ? '<p class="small warn"><b>Check:</b> ' + esc(r.check) + "</p>" : "") +
+          (r.visaNote ? '<p class="small"><b>Visa:</b> ' + esc(r.visaNote) + "</p>" : "") +
+          '<div class="chips">' +
+            '<span class="chip pri-' + esc(r.priority || "B") + '">' + esc(pri.label) + "</span>" +
+            '<span class="chip tone-' + st.tone + '">' + esc(st.label) + "</span>" +
+            (AREA_LABEL[r.area] ? '<span class="chip">' + esc(AREA_LABEL[r.area]) + "</span>" : "") +
+            (r.source ? '<span class="chip">Found on ' + esc(r.source) + "</span>" : "") +
+            (r.addedByYou ? '<span class="chip">Added by you</span>' : "") +
+          "</div>" +
+        "</div>" +
+        '<div class="side">' +
+          '<label>Status<select class="status" data-id="' + idAttr + '" aria-label="Status for ' + esc(r.title) + '">' + options + "</select></label>" +
+          (link ? '<a class="open" href="' + esc(link) + '" target="_blank" rel="noopener">Open listing</a>' : "") +
+          '<details class="mynotes" data-id="' + idAttr + '"' + (openNotes[r.id] ? " open" : "") + ">" +
+            "<summary>Your notes" + (r.myNotes ? " (saved)" : "") + "</summary>" +
+            '<textarea class="notes-input" id="notes-' + idAttr + '" data-id="' + idAttr + '" rows="4" maxlength="2000" placeholder="Type your notes here" aria-label="Your notes for ' + esc(r.title) + '">' + esc(r.myNotes) + "</textarea>" +
+            '<span class="note-hint" data-hint="' + idAttr + '" aria-live="polite"></span>' +
+          "</details>" +
+          (r.addedByYou ? '<button class="remove" type="button" data-id="' + idAttr + '">Remove</button>' : "") +
+        "</div>" +
+      "</article>";
+  }
+
+  function renderTally(all) {
+    var soon = 0, todo = 0, active = 0, offers = 0, now = 0;
+    all.forEach(function (r) {
+      var left = dayDiff(r.deadline);
+      if (r.status === "To apply") {
+        todo++;
+        if (left !== null && left >= 0 && left <= 7) soon++;
+        if (r.startRule === "now" && (left === null || left >= 0)) now++;
+      }
+      if (IN_PROGRESS.indexOf(r.status) >= 0) active++;
+      if (r.status === "Offer") offers++;
+    });
+    var saveText = dbState === "on" ? "Changes save to your account"
+      : dbState === "off" ? (localOK ? "Changes save on this device only" : "This view cannot save changes")
+      : "Loading your saved progress";
+    tallyEl.innerHTML =
+      '<span class="' + (soon ? "hot" : "") + '"><b>' + soon + "</b> closing within 7 days</span>" +
+      "<span><b>" + todo + "</b> to apply</span>" +
+      "<span><b>" + now + "</b> could start now</span>" +
+      "<span><b>" + active + "</b> in progress</span>" +
+      "<span><b>" + offers + "</b> " + (offers === 1 ? "offer" : "offers") + "</span>" +
+      "<span>" + esc(saveText) + "</span>";
+  }
+
+  function cityButton(name, label, count) {
+    var on = state.city === name;
+    return '<button class="pick' + (count ? "" : " is-zero") + '" type="button" data-city="' + esc(name) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+      esc(label) + '<span class="n">' + count + "</span></button>";
+  }
+
+  function renderCities(all) {
+    var pool = all.filter(function (r) { return matches(r, { city: true }); });
+    var counts = {};
+    pool.forEach(function (r) { citiesOf(r).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
+    var html = cityButton("all", "All cities", pool.length);
+    CITY_ORDER.forEach(function (c) { html += cityButton(c, c, counts[c] || 0); });
+    citiesEl.innerHTML = html;
+    var extra = [];
+    all.forEach(function (r) {
+      citiesOf(r).forEach(function (c) { if (CITY_ORDER.indexOf(c) < 0 && extra.indexOf(c) < 0) extra.push(c); });
+    });
+    extra.sort(function (a, b) {
+      if (a === "Other") return 1;
+      if (b === "Other") return -1;
+      var ua = UNDERRATED.indexOf(a), ub = UNDERRATED.indexOf(b);
+      if (ua >= 0 && ub >= 0) return ua - ub;
+      if (ua >= 0) return -1;
+      if (ub >= 0) return 1;
+      return a.localeCompare(b, "en-GB");
+    });
+    moreWrap.hidden = !extra.length;
+    document.getElementById("more-cities-label").textContent = MORE_LABEL;
+    moreEl.innerHTML = extra.map(function (c) { return cityButton(c, c === "Other" ? "Other UK places" : c, counts[c] || 0); }).join("");
+  }
+
+  function renderTabs(all) {
+    var counts = { all: 0, grad: 0, junior: 0 };
+    all.forEach(function (r) {
+      if (!matches(r, { type: true })) return;
+      counts.all++;
+      if (counts[r.type] != null) counts[r.type]++;
+    });
+    document.querySelectorAll("[data-count]").forEach(function (el) {
+      el.textContent = String(counts[el.getAttribute("data-count")] || 0);
+    });
+    document.querySelectorAll(".tab").forEach(function (t) {
+      t.setAttribute("aria-selected", t.getAttribute("data-type") === state.type ? "true" : "false");
+    });
+  }
+
+  function emptyHTML(title, body) {
+    return '<div class="empty"><p class="empty-title">' + esc(title) + "</p><p>" + esc(body) + "</p></div>";
+  }
+
+  function render() {
+    pending = false;
+    var all = roles();
+    renderTabs(all);
+    renderCities(all);
+    renderTally(all);
+    if (!all.length) {
+      listEl.innerHTML = emptyHTML("No roles saved yet", "Add the first one with the form below.");
+      return;
+    }
+    var rows = all.filter(function (r) { return matches(r); }).sort(compare);
+    if (!rows.length) {
+      if (state.city === "Glasgow") {
+        listEl.innerHTML = emptyHTML("No Glasgow roles yet", "None passed the checks in this round. The next round looks again, and you can add one you find with the form below.");
+      } else if (state.city !== "all") {
+        listEl.innerHTML = emptyHTML("Nothing in " + state.city + " matches", "Try All cities, or clear the search and filters.");
+      } else {
+        listEl.innerHTML = emptyHTML("Nothing matches these filters", "Clear the search or set the filters back to All.");
+      }
+      return;
+    }
+    listEl.innerHTML = rows.map(rowHTML).join("");
+  }
+
+  function isEditing() {
+    var a = document.activeElement;
+    return !!(a && listEl.contains(a) && /^(TEXTAREA|SELECT|INPUT)$/.test(a.tagName));
+  }
+  function scheduleRender() {
+    if (isEditing()) { pending = true; return; }
+    render();
+  }
+
+  function setHint(id, text) {
+    var el = listEl.querySelector('.note-hint[data-hint="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+    if (el) el.textContent = text;
+  }
+
+  function pushRemote(id) {
+    if (!db || dbState !== "on" || isLocalId(id)) return Promise.resolve(false);
+    if (inflight[id]) { again[id] = true; return inflight[id]; }
+    var body = remoteProgress[id];
+    inflight[id] = db.doc("progress/" + id).set(body)
+      .then(function () { return true; }, function () { return false; })
+      .then(function (ok) {
+        inflight[id] = null;
+        if (again[id]) { again[id] = false; return pushRemote(id); }
+        return ok;
+      });
+    return inflight[id];
+  }
+
+  function saveProgress(id, patch, quiet) {
+    var cur = progressFor(id) || {};
+    var next = {
+      status: STATUSES.indexOf(cur.status) >= 0 ? cur.status : "To apply",
+      myNotes: typeof cur.myNotes === "string" ? cur.myNotes : "",
+      statusChanged: cur.statusChanged || null
+    };
+    Object.keys(patch).forEach(function (k) { next[k] = patch[k]; });
+    localProgress[id] = next;
+    var savedLocal = lsWrite(LS_PROGRESS, localProgress);
+    if (dbState === "on" && !isLocalId(id)) {
+      remoteProgress[id] = next;
+      return pushRemote(id).then(function (ok) {
+        var msg = ok ? "Saved" : (savedLocal ? "Saved on this device; online saving failed" : "Couldn't save. Copy your text somewhere safe.");
+        if (quiet) setHint(id, msg); else toast(msg);
+      });
+    }
+    var msg = savedLocal ? saveWhere() : "Not saved: this view blocks storage. Copy your text somewhere safe.";
+    if (quiet) setHint(id, msg); else toast(msg);
+    return Promise.resolve();
+  }
+
+  listEl.addEventListener("change", function (e) {
+    var sel = e.target.closest && e.target.closest("select.status");
+    if (!sel) return;
+    saveProgress(sel.getAttribute("data-id"), { status: sel.value, statusChanged: todayISO() }, false);
+    var all = roles();
+    renderTabs(all);
+    renderCities(all);
+    renderTally(all);
+    scheduleRender();
+  });
+
+  listEl.addEventListener("input", function (e) {
+    var ta = e.target.closest && e.target.closest("textarea.notes-input");
+    if (!ta) return;
+    var id = ta.getAttribute("data-id");
+    setHint(id, "Typing…");
+    clearTimeout(noteTimers[id]);
+    noteTimers[id] = setTimeout(function () { saveProgress(id, { myNotes: ta.value }, true); }, 700);
+  });
+
+  listEl.addEventListener("focusout", function (e) {
+    var ta = e.target.closest && e.target.closest("textarea.notes-input");
+    if (ta) {
+      var id = ta.getAttribute("data-id");
+      clearTimeout(noteTimers[id]);
+      var cur = progressFor(id) || {};
+      if ((cur.myNotes || "") !== ta.value) saveProgress(id, { myNotes: ta.value }, true);
+    }
+    setTimeout(function () { if (pending) scheduleRender(); }, 0);
+  });
+
+  listEl.addEventListener("toggle", function (e) {
+    var d = e.target;
+    if (d && d.classList && d.classList.contains("mynotes")) {
+      openNotes[d.getAttribute("data-id")] = d.open;
+      if (d.open) {
+        var ta = d.querySelector("textarea");
+        if (ta) { try { ta.focus({ preventScroll: true }); } catch (err) { ta.focus(); } }
+      }
+    }
+  }, true);
+
+  listEl.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("button.remove");
+    if (!btn) return;
+    if (!btn.classList.contains("arm")) {
+      btn.classList.add("arm");
+      btn.textContent = "Click again to remove";
+      setTimeout(function () { if (btn.isConnected) { btn.classList.remove("arm"); btn.textContent = "Remove"; } }, 4000);
+      return;
+    }
+    var id = btn.getAttribute("data-id");
+    delete localProgress[id];
+    lsWrite(LS_PROGRESS, localProgress);
+    if (isLocalId(id)) {
+      localAdded = localAdded.filter(function (r) { return r.id !== id; });
+      lsWrite(LS_ADDED, localAdded);
+      toast("Removed");
+      render();
+      return;
+    }
+    if (!db) { toast("Removing this role needs your saved account data. Try again in claude.ai."); return; }
+    db.doc("added/" + id).delete()
+      .then(function () { toast("Removed"); return db.doc("progress/" + id).delete(); })
+      .catch(function () { toast("Couldn't remove it. Try again in a moment."); });
+  });
+
+  function onCityClick(e) {
+    var b = e.target.closest && e.target.closest("button[data-city]");
+    if (!b) return;
+    var c = b.getAttribute("data-city");
+    state.city = (state.city === c && c !== "all") ? "all" : c;
+    render();
+  }
+  citiesEl.addEventListener("click", onCityClick);
+  moreEl.addEventListener("click", onCityClick);
+
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () { state.type = t.getAttribute("data-type"); render(); });
+  });
+  var qTimer = null;
+  document.getElementById("q").addEventListener("input", function (e) {
+    clearTimeout(qTimer);
+    var v = e.target.value;
+    qTimer = setTimeout(function () { state.q = v.trim().toLowerCase(); render(); }, 150);
+  });
+  document.getElementById("area-filter").addEventListener("change", function (e) { state.area = e.target.value; render(); });
+  document.getElementById("start-filter").addEventListener("change", function (e) { state.start = e.target.value; render(); });
+  document.getElementById("sort").addEventListener("change", function (e) { state.sort = e.target.value; render(); });
+  document.getElementById("status-filter").addEventListener("change", function (e) { state.status = e.target.value; render(); });
+
+  var citySelect = document.getElementById("f-city");
+  function opts(list) { return list.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join(""); }
+  citySelect.innerHTML = '<optgroup label="Ten biggest tech cities">' + opts(CITY_ORDER) + "</optgroup>" +
+    '<optgroup label="Underrated cities">' + opts(UNDERRATED) + "</optgroup>" +
+    '<option value="Other">Another UK place</option>';
+
+  document.getElementById("add-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = e.target;
+    var fd = new FormData(form);
+    var employer = String(fd.get("employer") || "").trim();
+    var title = String(fd.get("title") || "").trim();
+    if (!employer || !title) { toast("Add at least an employer and a role."); return; }
+    var deadline = String(fd.get("deadline") || "");
+    var type = String(fd.get("type") || "grad");
+    var area = String(fd.get("area") || "da");
+    var startRule = String(fd.get("startRule") || "visa");
+    var city = String(fd.get("city") || "Other");
+    var doc = {
+      employer: employer,
+      title: title,
+      city: (CITY_ORDER.indexOf(city) >= 0 || UNDERRATED.indexOf(city) >= 0) ? city : "Other",
+      location: String(fd.get("location") || "").trim(),
+      salary: String(fd.get("salary") || "").trim(),
+      deadline: /^\d{4}-\d{2}-\d{2}$/.test(deadline) ? deadline : null,
+      type: TYPE_LABEL[type] ? type : "grad",
+      area: AREA_LABEL[area] ? area : "da",
+      startRule: ["now", "visa", "later"].indexOf(startRule) >= 0 ? startRule : "visa",
+      link: safeUrl(fd.get("link")),
+      fit: String(fd.get("notes") || "").trim(),
+      priority: "B",
+      posted: todayISO(),
+      addedByYou: true
+    };
+    if (dbState === "on" && db) {
+      try {
+        await db.collection("added").add(doc);
+        form.reset();
+        toast("Role added");
+        return;
+      } catch (err) {
+        if (err && err.code === "quota_exceeded") { toast("The page is full. Remove a few roles first."); return; }
+      }
+    }
+    doc.id = "local-" + Date.now().toString(36);
+    localAdded.push(doc);
+    if (lsWrite(LS_ADDED, localAdded)) {
+      form.reset();
+      toast("Role added on this device");
+    } else {
+      localAdded.pop();
+      toast("Couldn't add it here. This view blocks storage.");
+    }
+    render();
+  });
+
+  (function placeToday() {
+    var t = today();
+    var span = WINDOW_END - WINDOW_START;
+    var x = Math.max(0, Math.min(1, (t - WINDOW_START) / span)) * 100;
+    var pin = document.getElementById("pin-today");
+    if (pin) {
+      pin.style.left = x.toFixed(2) + "%";
+      var near = [20, 60.67, 78.67].some(function (f) { return Math.abs(f - x) < 4; });
+      pin.classList.toggle("no-badge", near);
+    }
+    var lab = document.getElementById("today-label");
+    if (lab) lab.textContent = "Today, " + t.getDate() + " " + MONTHS[t.getMonth()] + ":";
+  })();
+
+  render();
+
+  (async function connect() {
+    var api = null;
+    try {
+      api = (window.claude && typeof window.claude.use === "function") ? await window.claude.use("db") : null;
+    } catch (e) { api = null; }
+    if (!api) { dbState = "off"; scheduleRender(); return; }
+    db = api;
+    dbState = "on";
+    scheduleRender();
+    db.collection("progress").onSnapshot(function (snap) {
+      var next = {};
+      snap.docs.forEach(function (d) { var v = d.data(); if (v) next[d.id] = v; });
+      Object.keys(remoteProgress).forEach(function (id) { if (inflight[id] && !next[id]) next[id] = remoteProgress[id]; });
+      remoteProgress = next;
+      scheduleRender();
+    }, function () { dbState = "off"; scheduleRender(); });
+    db.collection("added").onSnapshot(function (snap) {
+      remoteAdded = snap.docs.map(function (d) { return Object.assign({}, d.data(), { id: d.id, addedByYou: true }); });
+      scheduleRender();
+    }, function () { scheduleRender(); });
+  })();
+})();
+</script>
+
+</body>
+</html>
