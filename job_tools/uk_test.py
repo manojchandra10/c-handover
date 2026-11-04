@@ -32,6 +32,7 @@ for title, fam in [
     ("Data Analyst", "Analyst (level from advert)"),
     ("Insight Analyst", "Analyst (level from advert)"),
     ("Data Scientist", "Data scientist (level from advert)"),
+    ("Graduate Trainee - Data Science 2027", "Junior data scientist"),
 ]:
     check(f"family: {title}", R.classify_title(title)[0], fam)
 for title, why in [

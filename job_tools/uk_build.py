@@ -49,8 +49,10 @@ GRAD_VISA = [
      "Since 22 July 2025 new applications need a degree-level (RQF 6) occupation and at least £41,700, or the new-entrant rate (70%, often £33,400) for people switching from a Graduate visa",
      "Statement of Changes HC 997 (July 2025); going-rate tables on tarve.co.uk"),
     ("Which titles can be sponsored later",
-     "Statistician and data scientist roles usually sit under SOC 2433 or 2139 (degree level). Junior data analyst roles are often coded 3544, an associate-level code; check the code with the employer before relying on later sponsorship",
-     "Appendix Skilled Occupations; third-party code look-ups, so treat as a guide"),
+     "Statistician and data scientist roles usually use degree-level codes such as SOC 2433. Data analyst roles often use SOC 3544, which is below degree level "
+     "but is on the Temporary Shortage List published on 22 July 2025 (going rate £34,900, new-entrant rate £28,600), so it can still be sponsored for now. "
+     "That list is temporary, so check the code and pay with the employer",
+     "gov.uk Skilled Worker visa: temporary shortage list (22 July 2025); tarve.co.uk for SOC 2433 rates"),
     ("Civil Service posts", "Commonwealth citizens (India included) can apply for most posts. Many analyst posts need security clearance, which asks for years of UK residence",
      "Civil Service Nationality Rules; individual adverts"),
 ]
@@ -150,9 +152,16 @@ def read_first_jobs(ws, label, n_companies, sources):
         c.font, c.alignment = F_BOLD, Alignment(horizontal="left")
     r += 2
     ws.cell(row=r, column=1, value="How each role was checked").font = F_SUB
-    for k, v in [("Check 1", "The advert was read live on the employer's careers page or hiring system (or jobs.ac.uk, the Civil Service Analysis Function list or DWP Find a job)."),
-                 ("Check 2", "The same link was opened again in a separate request. Roles closed at either check are on the Excluded sheet."),
-                 ("Closing date", "Taken from the advert. Roles with no closing date were listed live at both checks; apply early, since they can close without notice."),
+    checks = [("Check 1", "The advert was read live on the employer's careers page or hiring system (or jobs.ac.uk, the Civil Service Analysis Function list or DWP Find a job)."),
+              ("Check 2", "The same link was opened again in a separate request. Roles closed at either check are on the Excluded sheet.")]
+    closing_note = "Taken from the advert. Roles with no closing date were listed live at both checks; apply early, since they can close without notice."
+    if not n_companies:
+        closing_note = "Taken from the search result. Rows with no closing date were shown as open or rolling; apply early, since they can close without notice."
+        checks = [("Check 1", "Found in a web search result that showed a future closing date or an open, rolling application window."),
+                  ("Check 2", "Not done yet. This session could not open employer websites. Running uk_crawl.py and uk_verify.py "
+                              "in a session with full network access re-opens every link and replaces this sheet.")]
+    for k, v in checks + [
+                 ("Closing date", closing_note),
                  ("Level", "'Entry title' means the title says junior, graduate, associate, assistant or entry level. Other rows show what the advert asks: years of experience (0-2 kept, 3+ left out), 'Entry level stated in advert', or 'Level not stated'."),
                  ("Sources used", sources)]:
         r += 1
@@ -258,7 +267,9 @@ def main():
     wb = Workbook()
     sources = "Employer careers pages and their hiring systems; jobs.ac.uk; Civil Service Analysis Function vacancies; DWP Find a job."
     if a.seed:
-        sources += " Rows marked 'Web search' in How found were found by web search and re-checked as described in that row."
+        sources += " Rows whose How found starts with 'Web search' came from web search results."
+    if not comps:
+        sources = "Web search results only: " + ", ".join(sorted({r.get("how", "").replace("Web search: ", "") for r in roles if r.get("how")})) + "."
     read_first_jobs(wb.active, a.label, len(comps), sources)
     job_rows(wb.create_sheet("Jobs"), matched)
     job_rows(wb.create_sheet("Other live roles"), other, employer_key="employer_on_advert")

@@ -92,7 +92,7 @@ RESEARCH_BODIES = [r"\balan turing institute\b", r"\bfrancis crick institute\b",
 SECTORS = [
     ("University", r"\buniversit(y|ies)\b|\bschool of (economics|business|hygiene|oriental|advanced study)|\bbusiness school\b|"
                    r"\bimperial college london\b|\bking'?s college london\b|\buniversity college\b|\bbirkbeck\b|\bcourtauld institute\b|"
-                   r"\bcollege of (art|music)\b|\broyal veterinary college\b|\bcranfield\b"),
+                   r"\bcollege of (art|music)\b|\broyal veterinary college\b|\bcranfield university\b"),
     ("Research",   r"\bresearch\b|\blaborator(y|ies)\b|\blabs\b|\binstitute\b|\bscientific\b|\bcentre for\b|\bcenter for\b|\bobservatory\b|"
                    r"\bthink tank\b|\bfoundation for\b|\bpolicy\b"),
     ("Government", r"\bgovernment\b|\bregulator\b|\bombudsman\b|\bparliament\b"),

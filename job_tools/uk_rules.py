@@ -14,7 +14,7 @@ EXCLUDE_TITLE = [
     ("Internship or placement", r"\b(intern|internship|placement|industrial placement|year in industry|summer|spring week|"
                                 r"insight (week|day|programme|program)|work experience|vacation scheme|undergraduate)\b"),
     ("Apprenticeship or school leaver", r"\b(apprentice|apprenticeship|school leaver|level [2-5]\b|t[- ]level|sixth form)\b"),
-    ("Trainee title", r"\btrainee\b"),
+    ("Trainee title", r"^(?!.*\bgraduate\b).*\btrainee\b"),   # "Graduate Trainee" is a bank graduate programme title
     ("PhD or academic post", r"\b(phd|ph\.d|postdoc|post-doc|postdoctoral|research fellow|fellowship|lecturer|professor|reader in)\b"),
     ("Part-time, contract or temporary", r"\b(part[- ]time|contractor|freelance|temp|temporary|maternity cover|ad hoc|zero hours?)\b"),
     ("Unrelated graduate role", r"\bgraduate (civil|structural|mechanical|electrical|site|quantity|building|geotechnical|planner|planning|"
