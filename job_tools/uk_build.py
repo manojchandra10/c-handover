@@ -43,7 +43,7 @@ GRAD_VISA = [
     ("Graduate visa length", "2 years for a master's degree if you apply before 1 January 2027; 18 months for applications from that date",
      "Statement of Changes HC 1333, 14 October 2025 (reported by thepienews.com and university visa pages)"),
     ("Starting a permanent full-time job before the Graduate visa is granted",
-     "Allowed once your course is complete (official results issued) and your Graduate visa application is in, if your Student visa was granted on or after 6 April 2022",
+     "Permitted once your course is complete (official results issued) and your Graduate visa application is in, if your Student visa was granted on or after 6 April 2022",
      "University guidance pages (for example Leeds, Bristol, Sheffield); check with Nottingham's international student team"),
     ("Skilled Worker visa later",
      "Since 22 July 2025 new applications need a degree-level (RQF 6) occupation and at least £41,700, or the new-entrant rate (70%, often £33,400) for people switching from a Graduate visa",
