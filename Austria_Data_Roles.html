@@ -1,0 +1,1878 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Austria Data Roles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,600..800&family=JetBrains+Mono:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column, same system as Rolling Data Roles. Start window on top, then the visa position, then each role as a row led by a ticket naming the city and the working language. */
+:root {
+  --bg: #F1F4F5;
+  --surface: #FFFFFF;
+  --ink: #142029;
+  --muted: #55636D;
+  --line: #D5DCE1;
+  --accent: #0B6375;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DCEEF1;
+  --flag-red: #C8102E;
+  --flag-white: #FFFFFF;
+  --urgent: #B3261E;
+  --urgent-bg: #FCE8E6;
+  --soon: #8A5300;
+  --soon-bg: #FDF0DA;
+  --good: #1D6A42;
+  --good-bg: #E1F2E8;
+  --info: #0F5C8A;
+  --info-bg: #E1EEF7;
+  --neutral-bg: #E9EEF1;
+  --past: #7B8790;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E151A;
+    --surface: #151F26;
+    --ink: #E3EAEE;
+    --muted: #9AAAB4;
+    --line: #27343D;
+    --accent: #62C3D4;
+    --accent-ink: #06222A;
+    --accent-soft: #12363F;
+    --flag-red: #FF5C6E;
+    --flag-white: #F2F4F5;
+    --urgent: #FF8C82;
+    --urgent-bg: #3A1B1B;
+    --soon: #F2C164;
+    --soon-bg: #34280F;
+    --good: #74D3A0;
+    --good-bg: #13301F;
+    --info: #80C3EE;
+    --info-bg: #13293A;
+    --neutral-bg: #1A262E;
+    --past: #808F99;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E151A;
+  --surface: #151F26;
+  --ink: #E3EAEE;
+  --muted: #9AAAB4;
+  --line: #27343D;
+  --accent: #62C3D4;
+  --accent-ink: #06222A;
+  --accent-soft: #12363F;
+  --flag-red: #FF5C6E;
+  --flag-white: #F2F4F5;
+  --urgent: #FF8C82;
+  --urgent-bg: #3A1B1B;
+  --soon: #F2C164;
+  --soon-bg: #34280F;
+  --good: #74D3A0;
+  --good-bg: #13301F;
+  --info: #80C3EE;
+  --info-bg: #13293A;
+  --neutral-bg: #1A262E;
+  --past: #808F99;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 72px;
+  display: grid;
+  gap: 30px;
+}
+@media (min-width: 720px) {
+  .wrap {
+    padding-left: max(28px, env(safe-area-inset-left, 0px));
+    padding-right: max(28px, env(safe-area-inset-right, 0px));
+    padding-block: 40px 88px;
+  }
+}
+h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+h3 { text-wrap: balance; }
+
+/* Header */
+.top { display: grid; gap: 10px; }
+.eyebrow {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.flag {
+  display: inline-grid;
+  grid-template-rows: repeat(3, 1fr);
+  width: 30px;
+  height: 20px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  flex: none;
+}
+.flag i { display: block; }
+.flag i:nth-child(1), .flag i:nth-child(3) { background: var(--flag-red); }
+.flag i:nth-child(2) { background: var(--flag-white); }
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(36px, 6.4vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.lede { margin: 0; max-width: 68ch; color: var(--muted); font-size: 17px; }
+.tally {
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.tally b { font-weight: 600; color: var(--ink); }
+
+/* Start window */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 16px 16px;
+  min-width: 0;
+}
+@media (min-width: 720px) { .panel { padding: 22px 24px 20px; } }
+.track { position: relative; margin: 6px 0 4px; padding-top: 50px; }
+.months { position: absolute; inset: 0 0 auto 0; height: 20px; }
+.month {
+  position: absolute;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-left: 5px;
+  border-left: 1px solid var(--line);
+  line-height: 20px;
+  white-space: nowrap;
+}
+.lanes { position: relative; display: grid; gap: 8px; padding-block: 8px; }
+.lane { position: relative; height: 30px; border-radius: 6px; background: var(--neutral-bg); }
+.bar {
+  position: absolute;
+  inset-block: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding-inline: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.bar.apply { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.bar.wait { background: var(--soon-bg); color: var(--soon); border: 1px solid var(--soon); }
+.bar.start { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+.bar-label { position: relative; z-index: 2; background: inherit; padding-inline: 4px; margin-left: -4px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; }
+.pin { position: absolute; z-index: 1; top: -4px; bottom: 0; width: 0; border-left: 2px dashed var(--muted); }
+.pin.is-today { border-left: 2px solid var(--accent); }
+.pin span {
+  position: absolute;
+  top: -20px;
+  left: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--bg);
+}
+.pin.is-today span { background: var(--accent); color: var(--accent-ink); }
+.legend {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px 22px;
+  grid-template-columns: minmax(0, 1fr);
+  font-size: 15px;
+}
+@media (min-width: 720px) { .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.legend li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.legend .num {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--bg);
+}
+.legend li:first-child .num { background: var(--accent); color: var(--accent-ink); }
+.legend b { font-weight: 700; }
+.fine { margin: 12px 0 0; font-size: 13px; color: var(--muted); max-width: 90ch; }
+
+/* Visa routes */
+.intro { margin: 0 0 14px; max-width: 75ch; color: var(--muted); font-size: 16px; }
+.routes { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .routes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.route {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px 16px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+.route h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+}
+.route dl { margin: 0; display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px 10px; font-size: 15px; }
+.route dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 3px;
+}
+.route dd { margin: 0; }
+.tag {
+  justify-self: start;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--neutral-bg);
+  color: var(--ink);
+}
+.tag.tone-good { background: var(--good-bg); color: var(--good); }
+.tag.tone-soon { background: var(--soon-bg); color: var(--soon); }
+.tag.tone-past { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+
+.sub {
+  margin: 26px 0 10px;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+}
+.calc {
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 2px solid var(--ink);
+  padding-top: 14px;
+}
+@media (min-width: 820px) { .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+.calc-inputs { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.calc-inputs label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.calc-inputs select {
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+.calc-inputs .check { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; font-weight: 600; }
+.calc-inputs .check input { margin: 3px 0 0; width: 16px; height: 16px; accent-color: var(--accent); }
+.calc-inputs .check.is-off { opacity: 0.6; }
+.calc-out { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.table-scroll { overflow-x: auto; }
+.pts { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+.pts th, .pts td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.pts th { font-weight: 700; white-space: nowrap; }
+.pts td { color: var(--muted); }
+.pts td.n { text-align: right; font-family: var(--font-mono); font-weight: 600; color: var(--ink); padding-right: 0; white-space: nowrap; }
+.pts tfoot th, .pts tfoot td { border-bottom: none; border-top: 2px solid var(--ink); font-size: 16px; }
+.pts tfoot td.n { font-size: 18px; }
+.meter { position: relative; height: 14px; margin-top: 18px; border-radius: 7px; background: var(--neutral-bg); border: 1px solid var(--line); }
+.meter .fill { position: absolute; inset: 0 auto 0 0; border-radius: 7px; background: var(--soon); transition: width 0.25s ease; }
+.meter.ok .fill { background: var(--good); }
+.meter .mark { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 2px solid var(--flag-red); }
+.meter .mark span {
+  position: absolute;
+  top: -19px;
+  left: -10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--flag-red);
+}
+.meter-scale { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+.verdict { margin: 0; font-weight: 700; font-size: 16px; }
+.verdict.ok { color: var(--good); }
+.verdict.short { color: var(--soon); }
+.calc-note { margin: 0; font-size: 14px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .meter .fill { transition: none; } }
+
+.explain { display: grid; gap: 12px 28px; grid-template-columns: minmax(0, 1fr); border-top: 2px solid var(--ink); padding-top: 14px; }
+@media (min-width: 820px) { .explain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.item { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 12px; align-content: start; min-width: 0; }
+.item .code {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--muted);
+  grid-row: span 2;
+}
+.item.yours .code { color: var(--flag-red); }
+.item h4 { margin: 0; font-size: 15px; font-weight: 700; }
+.item h4 span { font-weight: 600; color: var(--muted); }
+.item p { margin: 0; font-size: 15px; }
+.explain .after { grid-column: 1 / -1; margin: 0; font-size: 15px; max-width: 95ch; }
+.explain .after + .after { color: var(--muted); }
+
+.cols { display: grid; gap: 12px 28px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 820px) { .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.col { border-top: 2px solid var(--ink); padding-top: 10px; min-width: 0; }
+.col h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+.steps, .bullets { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+.steps li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--muted); }
+.col p { margin: 0 0 8px; font-size: 15px; }
+.col p:last-child { margin-bottom: 0; }
+.col p b { font-weight: 700; }
+
+/* Notes */
+.note-grid { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .note-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .note-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.note { border-top: 2px solid var(--ink); padding-top: 10px; min-width: 0; }
+.note h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+.note p { margin: 0; font-size: 15px; color: var(--muted); }
+
+/* Controls */
+.controls { display: grid; gap: 14px; }
+.group-label {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+.pick {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.pick .n { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--muted); margin-left: 5px; }
+.pick[aria-pressed="true"], .pick[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pick[aria-pressed="true"] .n, .pick[aria-selected="true"] .n { color: var(--bg); opacity: 0.75; }
+.pick.is-zero { color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.filters label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.filters input[type="search"], .filters select, .side select, .add input, .add select, .add textarea, .mynotes textarea {
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+.filters .search { flex: 1 1 240px; }
+.filters .search input { width: 100%; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Role rows */
+.list { display: grid; gap: 12px; }
+.role {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 216px;
+  gap: 16px;
+  align-items: start;
+}
+.role.is-done { opacity: 0.62; }
+.ticket {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 8px 4px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--neutral-bg);
+  color: var(--ink);
+  text-align: center;
+}
+.t-city {
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  padding-bottom: 5px;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed currentColor;
+  width: 100%;
+}
+.t-code { font-family: var(--font-mono); font-size: 22px; font-weight: 600; line-height: 1.1; }
+.t-code small { font-size: 13px; font-weight: 500; }
+.t-cap { font-size: 12px; line-height: 1.25; margin-top: 3px; }
+.ticket.tone-good { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.ticket.tone-info { background: var(--info-bg); border-color: var(--info); color: var(--info); }
+.ticket.tone-soon { background: var(--soon-bg); border-color: var(--soon); color: var(--soon); }
+
+.role-main { min-width: 0; display: grid; gap: 6px; }
+.employer {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+.employer .kind { font-weight: 600; color: var(--accent); }
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 87.5%;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.22;
+}
+.title a { color: var(--ink); text-decoration: none; }
+.title a:hover { text-decoration: underline; }
+.meta { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 15px; }
+.meta .sal { font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+.fit { margin: 0; font-size: 15px; }
+.small { margin: 0; font-size: 14px; color: var(--muted); }
+.small b { font-weight: 700; color: var(--ink); }
+.small.warn b { color: var(--soon); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--neutral-bg);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chip.tone-good { background: var(--good-bg); color: var(--good); }
+.chip.tone-info { background: var(--info-bg); color: var(--info); }
+.chip.tone-soon { background: var(--soon-bg); color: var(--soon); }
+.chip.pri-A { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.chip.pri-C { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+
+.side { display: grid; gap: 10px; min-width: 0; }
+.side label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.side select { width: 100%; }
+.open {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+.open:hover { filter: brightness(1.06); }
+.mynotes summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
+.mynotes textarea { width: 100%; margin-top: 6px; resize: vertical; min-height: 88px; }
+.note-hint { display: block; min-height: 1.2em; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.remove {
+  font: inherit;
+  font-size: 14px;
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.remove.arm { border-color: var(--urgent); color: var(--urgent); }
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty p { margin: 0; }
+.empty .empty-title { font-family: var(--font-display); font-stretch: 87.5%; font-weight: 700; font-size: 19px; color: var(--ink); margin-bottom: 4px; }
+
+/* Searches, left out, add form, footer */
+.links { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px 28px; grid-template-columns: minmax(0, 1fr); font-size: 15px; }
+@media (min-width: 760px) { .links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.links li { min-width: 0; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.links a { font-weight: 600; }
+.links span { display: block; color: var(--muted); font-size: 14px; }
+.fold { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.fold > summary { cursor: pointer; font-family: var(--font-display); font-stretch: 87.5%; font-weight: 700; font-size: 19px; }
+.fold .intro { margin: 10px 0 0; }
+.leftout { margin: 12px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; max-width: 95ch; }
+.leftout b { font-weight: 700; }
+.leftout a { word-break: break-word; }
+.add form { display: grid; gap: 12px; margin-top: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.add label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; color: var(--muted); min-width: 0; }
+.add .wide { grid-column: 1 / -1; }
+.add button[type="submit"] {
+  justify-self: start;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+footer { font-size: 14px; color: var(--muted); max-width: 85ch; }
+footer p { margin: 0 0 6px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  max-width: calc(100% - 32px);
+  transition: opacity 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+@media (max-width: 480px) { .bar { font-size: 11.5px; padding-inline: 8px; } }
+
+@media (max-width: 780px) {
+  .role { grid-template-columns: 78px minmax(0, 1fr); gap: 12px 14px; }
+  .side { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .side .mynotes, .side .remove { grid-column: 1 / -1; }
+  .t-code { font-size: 19px; }
+  .t-city { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow"><span class="flag" aria-hidden="true"><i></i><i></i><i></i></span><span>Ten largest Austrian cities · English-speaking roles · searched 4 Nov 2026</span></p>
+    <h1>Austria Data Roles</h1>
+    <p class="lede">Graduate and junior data roles in Austria that work in English, with what each one means for a Red-White-Red Card or an EU Blue Card. This page is separate from your UK trackers and covers roles that could start within about three months.</p>
+    <p class="tally" id="tally" aria-live="polite"><span>Counting roles</span></p>
+  </header>
+
+  <section class="panel" aria-labelledby="window-h">
+    <h2 id="window-h">Your start window</h2>
+    <div class="track" id="track" aria-hidden="true">
+      <div class="months">
+        <span class="month" style="left:0%">Nov</span>
+        <span class="month" style="left:20%">Dec</span>
+        <span class="month" style="left:40.67%">Jan</span>
+        <span class="month" style="left:61.33%">Feb</span>
+        <span class="month" style="left:80%">Mar</span>
+      </div>
+      <div class="lanes">
+        <div class="lane"><div class="bar apply" style="left:0%;right:59.33%"><span class="bar-label">Apply and interview</span></div></div>
+        <div class="lane"><div class="bar wait" style="left:26.67%;right:36%"><span class="bar-label">Card decision, up to 8 weeks</span></div></div>
+        <div class="lane"><div class="bar start" style="left:64%;right:0%"><span class="bar-label">Earliest start</span></div></div>
+        <div class="pin is-today" id="pin-today" style="left:2%"><span>1</span></div>
+        <div class="pin" style="left:40.67%"><span>2</span></div>
+        <div class="pin" style="left:58%"><span>3</span></div>
+        <div class="pin" style="left:70.67%"><span>4</span></div>
+      </div>
+    </div>
+    <ol class="legend">
+      <li><span class="num">1</span><span><b id="today-label">Today:</b> apply, and book an English test. Some tests, such as Linguaskill and Aptis, give results within a few days.</span></li>
+      <li><span class="num">2</span><span><b>1 January 2027:</b> the 2027 shortage list and new pay floors take effect. The key-worker floor will probably rise to about €3,705 a month.</span></li>
+      <li><span class="num">3</span><span><b>27 January 2027:</b> your UK Student visa ends. Keep valid UK permission, such as the Graduate visa you plan to apply for, while you apply through the London embassy.</span></li>
+      <li><span class="num">4</span><span><b>Mid-February 2027:</b> the earliest likely start if an offer comes in early December and the card takes the full eight weeks. Your three-month window runs to about 4 February.</span></li>
+    </ol>
+    <p class="fine">Eight weeks is the normal decision time once the authority has a complete file. The €3,705 figure is half of the 2027 maximum contribution basis that KPMG lists (€7,410), since the key-worker floor is set at half of it. General information only, not immigration advice.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="rwr-h">
+    <h2 id="rwr-h">Red-White-Red Card and EU Blue Card</h2>
+    <p class="intro">Worked out from your CV and your answers: Indian passport, aged 30 or under, and no language certificates. Figures are for 2026. They come from Austrian government pages as quoted in search results, because this session could not open the pages themselves.</p>
+    <div class="routes">
+      <article class="route">
+        <p class="tag tone-good">Open with the right offer</p>
+        <h3>EU Blue Card</h3>
+        <dl>
+          <dt>Needs</dt>
+          <dd>A degree of at least three years, a job offer of six months or more that matches it, and pay of at least €55,678 a year (about €3,977 × 14). The AMS checks the labour market first. No points and no language certificate.</dd>
+          <dt>You</dt>
+          <dd>Both your degrees qualify. Few junior adverts pay enough, though OMV's trainee programmes do.</dd>
+        </dl>
+      </article>
+      <article class="route">
+        <p class="tag tone-soon">Needs an English certificate</p>
+        <h3>Red-White-Red Card: shortage occupation (item 34)</h3>
+        <dl>
+          <dt>Needs</dt>
+          <dd>Training that matches a listed occupation, a job in that occupation, and 55 of 90 points. Pay must meet the collective agreement, with no other minimum and no labour market check.</dd>
+          <dt>You</dt>
+          <dd>45 or 46 points today. An English certificate at B1 or above takes you to 55 or 56.</dd>
+        </dl>
+      </article>
+      <article class="route">
+        <p class="tag tone-soon">Needs an English certificate</p>
+        <h3>Red-White-Red Card: other key workers</h3>
+        <dl>
+          <dt>Needs</dt>
+          <dd>55 of 90 points in any occupation, and pay of at least €3,465 a month plus the two extra annual payments (€48,510 a year). The AMS checks the labour market first.</dd>
+          <dt>You</dt>
+          <dd>The same points as the shortage route. The pay floor is likely to rise to about €3,705 a month in January 2027.</dd>
+        </dl>
+      </article>
+      <article class="route">
+        <p class="tag tone-past">Out of reach for now</p>
+        <h3>Red-White-Red Card: very highly qualified</h3>
+        <dl>
+          <dt>Needs</dt>
+          <dd>70 of 100 points. The six-month Job Seeker Visa uses the same test.</dd>
+          <dt>You</dt>
+          <dd>A MINT degree gives 30 points and your age the top band. Without research, awards or several years of work you stay well under 70.</dd>
+        </dl>
+      </article>
+    </div>
+
+    <h3 class="sub" id="calc-h">Points on the Red-White-Red Card</h3>
+    <div class="calc" id="calc" aria-labelledby="calc-h">
+      <div class="calc-inputs">
+        <p class="calc-note">Both Red-White-Red Card routes above score you on this table. Change the boxes to see what a certificate would add.</p>
+        <label for="c-en">English certificate
+          <select id="c-en">
+            <option value="0">None yet</option>
+            <option value="5">A2 (5 points)</option>
+            <option value="10">B1 or higher (10 points)</option>
+          </select>
+        </label>
+        <label for="c-de">German certificate
+          <select id="c-de">
+            <option value="0">None</option>
+            <option value="5">A1 (5 points)</option>
+            <option value="10">A2 (10 points)</option>
+            <option value="15">B1 or higher (15 points)</option>
+          </select>
+        </label>
+        <label for="c-exp">Work experience the AMS counts
+          <select id="c-exp">
+            <option value="0">None</option>
+            <option value="1">One half-year (1 point)</option>
+          </select>
+        </label>
+        <label class="check" for="c-corp" id="c-corp-label"><input type="checkbox" id="c-corp"><span>English is the company's main language (5 more points, reported on migration.gv.at; ask how the AMS applies it)</span></label>
+        <p class="calc-note">The AMS gives 1 point per half-year of work that matches your degree, and 2 per half-year in Austria. Your internships, placement and freelance work add up to about eight months, so 1 point at most. An older official sheet accepts two or more years of study taught in English in place of a certificate. Your MSc lasted one year, so that would rest on your Delhi BSc, and a test certificate is the safer proof.</p>
+      </div>
+      <div class="calc-out">
+        <div class="table-scroll">
+          <table class="pts">
+            <tbody>
+              <tr><th scope="row">Qualification</th><td>Your degree, if the AMS accepts it for the occupation</td><td class="n">30</td></tr>
+              <tr><th scope="row">Work experience</th><td id="c-exp-note">Not counted</td><td class="n" id="c-exp-pts">0</td></tr>
+              <tr><th scope="row">Languages</th><td id="c-lang-note">No certificate</td><td class="n" id="c-lang-pts">0</td></tr>
+              <tr><th scope="row">Age</th><td>30 or under, the top band</td><td class="n">15</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><th scope="row">Total</th><td>of 90; 55 needed</td><td class="n" id="c-total">45</td></tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="meter" id="c-meter" role="img" aria-label="Points total compared with the 55-point minimum">
+          <div class="fill" id="c-fill" style="width:50%"></div>
+          <div class="mark" style="left:61.11%"><span>55</span></div>
+        </div>
+        <div class="meter-scale" aria-hidden="true"><span>0</span><span>90</span></div>
+        <p class="verdict short" id="c-verdict">10 points short of 55.</p>
+        <p class="calc-note">Languages count up to 25 points in total. Certificates must be under five years old and come from Cambridge, telc, IELTS, TOEIC, TOEFL, Linguaskill or Aptis for English, or ÖSD, Goethe, telc or ÖIF for German.</p>
+      </div>
+    </div>
+
+    <h3 class="sub">Items 21 and 34 on the shortage list</h3>
+    <div class="explain">
+      <div class="item">
+        <span class="code">21</span>
+        <h4>Techniker/innen mit höherer Ausbildung (Ing.) für Datenverarbeitung <span>· technicians with advanced training in data processing</span></h4>
+        <p>IT technicians at the level of the Austrian Ing. title. Graduates of a higher technical college (HTL, an upper-secondary school) earn it after three years of relevant work. This sits below degree level and assumes work experience you do not have yet.</p>
+      </div>
+      <div class="item yours">
+        <span class="code">34</span>
+        <h4>Diplomingenieur/innen für Datenverarbeitung <span>· graduate engineers in data processing</span></h4>
+        <p>Computing graduates at master's level. Dipl.-Ing. is the Austrian master's title in engineering and computer science. Your MSc is at this level, so 34 is the right item for you.</p>
+      </div>
+      <p class="after">Two things decide whether item 34 works. The AMS judges whether a data science MSc counts as training in data processing. Your machine learning, big data and databases modules help, and your maths BSc on its own would be a weaker match. The job must also be in that occupation, which suits a data scientist or ML post in a technical team better than a business reporting job.</p>
+      <p class="after">The list changes every year. Applications from 1 January 2027 fall under the 2027 list, which had not been published on 4 November 2026. Item 33 covers Ing.-level technicians not listed elsewhere, at the same level as item 21.</p>
+    </div>
+
+    <div class="cols" style="margin-top:26px">
+      <div class="col">
+        <h3>How an application runs</h3>
+        <ol class="steps">
+          <li>You get a binding job offer. Tell the employer early that you would need a Red-White-Red Card or an EU Blue Card.</li>
+          <li>The employer files the application with the residence authority in Austria, or you file it in person at the Austrian Embassy in London. The employer completes a declaration about the job.</li>
+          <li>The AMS checks your points, the pay and, where the route needs it, the labour market.</li>
+          <li>The authority decides, normally within eight weeks of a complete file.</li>
+          <li>You get a D visa to travel, which Indian passport holders need.</li>
+          <li>You collect the card in Austria and register your address within three days of moving in. The card runs for two years.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <h3>Documents to gather</h3>
+        <ul class="bullets">
+          <li>Passport valid for the whole stay, and a passport photo.</li>
+          <li>BSc and MSc certificates and transcripts. Indian documents need an apostille from the Ministry of External Affairs. Ask the embassy whether your Nottingham documents need a UK apostille as well.</li>
+          <li>An English test certificate, for either Red-White-Red Card route.</li>
+          <li>Your CV, the signed job offer and the employer's declaration.</li>
+          <li>Proof of somewhere to live in Austria and of health insurance. Ask the embassy when each one is due.</li>
+          <li>The fee. 2026 guides give figures from about €160 to €218, so check the current amount with the embassy.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>Other routes to ask about</h3>
+        <p><b>India–Austria Working Holiday Programme.</b> Reported as launched in 2026. Sources disagree on its length (six months or a year), and the age limit and quota could not be checked. Ask the Austrian Embassy in New Delhi.</p>
+        <p><b>Changing jobs later.</b> Since 7 August 2026, card holders can reportedly change employer after telling the authority, and keep the card through a short gap between jobs. Fragomen reported this; read the details before relying on it.</p>
+        <p><b>Embassy area.</b> Austrian embassies generally take applications from people who live lawfully in their area. When the employer files in Austria, your UK status matters less.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="notes-h">
+    <h2 id="notes-h">Before you apply</h2>
+    <div class="note-grid">
+      <article class="note">
+        <h3>English-speaking roles are scarce</h3>
+        <p>Most junior data adverts in Austria ask for German. The roles below work in English or may do, and the much longer list of roles left out for German is at the bottom of the page.</p>
+      </article>
+      <article class="note">
+        <h3>Pay comes 14 times a year</h3>
+        <p>Austrian salaries are monthly figures paid 14 times, with the two extra payments in summer and before Christmas. Adverts must state the collective-agreement minimum, and offers are often higher.</p>
+      </article>
+      <article class="note">
+        <h3>Ask the employer to file in Austria</h3>
+        <p>The employer can file your Red-White-Red Card application with the residence authority in Austria. Say in your first message that you would need a Red-White-Red Card or an EU Blue Card.</p>
+      </article>
+      <article class="note">
+        <h3>Book an English test</h3>
+        <p>Without a certificate you score 45 or 46 points, and the Red-White-Red Card needs 55. B1 or above adds 10, which is enough. The Blue Card needs no certificate.</p>
+      </article>
+      <article class="note">
+        <h3>Listings could not be opened</h3>
+        <p>This session could only use web search, so dates, pay and language come from search snippets. Open each advert and check those three things before you apply.</p>
+      </article>
+      <article class="note">
+        <h3>Your CV for Austria</h3>
+        <p>Replace the UK right-to-work line with one sentence: you are an Indian national and would need a Red-White-Red Card or EU Blue Card, which the employer can apply for in Austria.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Filter roles">
+    <div>
+      <p class="group-label" id="cities-label">Ten largest Austrian cities</p>
+      <div class="chiprow" id="cities" role="group" aria-labelledby="cities-label"></div>
+    </div>
+    <div class="chiprow" role="tablist" aria-label="Role type">
+      <button class="pick tab" role="tab" type="button" data-type="all" aria-selected="true">All roles<span class="n" data-count="all"></span></button>
+      <button class="pick tab" role="tab" type="button" data-type="grad" aria-selected="false">Graduate programmes<span class="n" data-count="grad"></span></button>
+      <button class="pick tab" role="tab" type="button" data-type="junior" aria-selected="false">Junior roles<span class="n" data-count="junior"></span></button>
+    </div>
+    <div class="filters">
+      <label class="search" for="q"><span class="sr">Search</span><input id="q" type="search" placeholder="Search employer, role or place" autocomplete="off"></label>
+      <label for="area-filter">Area
+        <select id="area-filter">
+          <option value="all">All areas</option>
+          <option value="da">Data analyst and BI</option>
+          <option value="ds">Data science and ML</option>
+        </select>
+      </label>
+      <label for="lang-filter">Language
+        <select id="lang-filter">
+          <option value="all">Any</option>
+          <option value="english">English stated</option>
+          <option value="en">English only</option>
+          <option value="deplus">German a plus</option>
+          <option value="unclear">Language unclear</option>
+        </select>
+      </label>
+      <label for="pay-filter">Pay
+        <select id="pay-filter">
+          <option value="all">Any pay</option>
+          <option value="blue">Clears Blue Card floor</option>
+          <option value="key">Clears key-worker floor</option>
+          <option value="low">Below both floors</option>
+          <option value="unknown">Not shown</option>
+        </select>
+      </label>
+      <label for="sort">Sort
+        <select id="sort">
+          <option value="priority">Priority</option>
+          <option value="pay">Pay, highest first</option>
+          <option value="city">City</option>
+          <option value="employer">Employer A to Z</option>
+        </select>
+      </label>
+      <label for="status-filter">Show
+        <select id="status-filter">
+          <option value="active">Hide rejected and not for me</option>
+          <option value="all">All statuses</option>
+          <option value="To apply">To apply</option>
+          <option value="Applied">Applied</option>
+          <option value="Assessment">Assessment</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Not for me">Not for me</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section id="list" class="list" aria-live="polite">
+    <div class="empty">
+      <p class="empty-title">Roles appear here</p>
+      <p>If this message stays, reload the page.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="search-h">
+    <h2 id="search-h">Searches to run each week</h2>
+    <p class="intro">These boards and employer pages could not be opened from this session. Run them yourself, open each advert, and add anything new with the form below.</p>
+    <ul class="links">
+      <li><a href="https://www.karriere.at/jobs/english/wien" target="_blank" rel="noopener">karriere.at: English jobs in Vienna</a><span>Austria's largest job board, filtered to English adverts.</span></li>
+      <li><a href="https://www.karriere.at/jobs/data-analyst-english" target="_blank" rel="noopener">karriere.at: data analyst jobs in English</a><span>All of Austria. Check each advert for junior level.</span></li>
+      <li><a href="https://en.devjobs.at/jobs/data-analyst-wien-109166" target="_blank" rel="noopener">devjobs.at: data analyst jobs in Vienna</a><span>Tick the English filter and the junior level.</span></li>
+      <li><a href="https://en.devjobs.at/jobs/data-scientist-graz-34719" target="_blank" rel="noopener">devjobs.at: data scientist jobs in Graz</a><span>Change the city for Linz, Salzburg or Innsbruck.</span></li>
+      <li><a href="https://at.indeed.com/q-data-scientist-english-l-wien-jobs.html" target="_blank" rel="noopener">Indeed Austria: data scientist, English, Vienna</a><span>Sort by date.</span></li>
+      <li><a href="https://www.stepstone.at/jobs/junior-data-analyst/in-wien" target="_blank" rel="noopener">StepStone: junior data analyst in Vienna</a><span>Many adverts here are in German, so read each one.</span></li>
+      <li><a href="https://www.omv.com/en/career/grow-with-us/trainee-program-austria" target="_blank" rel="noopener">OMV trainee programmes</a><span>New trainee vacancies appear through the year.</span></li>
+      <li><a href="https://www.infineon.com/careers/our-locations/austria/junior-talent-program" target="_blank" rel="noopener">Infineon Junior Talent Program</a><span>Villach, Graz and Linz.</span></li>
+      <li><a href="https://career.silicon-austria-labs.com/" target="_blank" rel="noopener">Silicon Austria Labs careers</a><span>Junior scientist posts in Graz, Linz and Villach.</span></li>
+      <li><a href="https://jobs.ait.ac.at/" target="_blank" rel="noopener">AIT jobs</a><span>Junior research and engineering posts in Vienna.</span></li>
+      <li><a href="https://jobs.rbinternational.com/" target="_blank" rel="noopener">RBI careers</a><span>A Vienna bank that works in English.</span></li>
+      <li><a href="https://jobs.redbull.com/" target="_blank" rel="noopener">Red Bull jobs</a><span>Watch for the next HQ graduate programme in Salzburg.</span></li>
+    </ul>
+    <p class="fine">On LinkedIn, search "junior data" with the location set to Austria, the experience level set to Entry level and the date set to Past week.</p>
+  </section>
+
+  <details class="fold" id="leftout">
+    <summary>Checked and left out</summary>
+    <p class="intro">These came up in the search on 4 November 2026 but failed a check, so you can skip them if you see them advertised.</p>
+    <ul class="leftout">
+      <li><b>Red Bull, (Junior) Data Scientist (Elsbethen, Salzburg):</b> asks for two or more years in data science, and one copy says German is a must.</li>
+      <li><b>Red Bull HQ Graduate Programme 2026, Data Science and Engineering Trainee (Salzburg):</b> the intake started in July 2026. Watch for the next one.</li>
+      <li><b>Anton Paar, Junior AI Engineer (Graz):</b> needs excellent German.</li>
+      <li><b>Sportsbook Software, Junior BI Analyst (Vienna):</b> needs advanced German.</li>
+      <li><b>Vienna Insurance Group, Junior Investment Data and Reporting Analyst:</b> needs good German.</li>
+      <li><b>TD Trusted Decisions, junior data analyst (Wels):</b> needs German at C2.</li>
+      <li><b>ams OSRAM, AI Data Scientist (Premstätten, near Graz):</b> lists German and English, and one board calls it junior while another calls it experienced.</li>
+      <li><b>Stadt Wien, ÖBB, UniCredit Bank Austria, Allianz, GBTEC, smart Energy Services, Raiffeisenverband Salzburg and Raiffeisen Vorarlberg:</b> junior data roles advertised in German for Austrian public services or customers, so German is very likely needed.</li>
+      <li><b>CRIF, (Junior) Data Scientist (Vienna):</b> posted around 30 October 2026, but no details or language section showed. Worth a quick look on CRIF's own site.</li>
+      <li><b>Tractive, Data Analyst (Pasching, near Linz):</b> works in English, but the level is mid.</li>
+      <li><b>TourRadar, fiskaly and v_labs data analyst roles (Vienna):</b> ask for two to five years of experience.</li>
+      <li><b>Dynatrace:</b> its data roles are senior, and its junior openings are in software engineering, which you left out.</li>
+      <li><b>Boehringer Ingelheim, Advanced Data Analyst / Data Scientist (Vienna):</b> asks for five to ten years.</li>
+      <li><b>Entain, Greentube and Borealis data roles:</b> senior or experienced.</li>
+      <li><b>AVL, Data Scientist (Graz):</b> experienced level. AVL's junior openings are theses and working-student posts.</li>
+      <li><b>IBM, Junior Data Scientist AI (Vienna):</b> the listing asks for five years.</li>
+      <li><b>kununu, Junior Data Scientist (Vienna):</b> posted in October 2024. <b>PriceHubble, Junior Data Analyst (Vienna):</b> closed.</li>
+      <li><b>IIASA, Research Assistant in Data Science (Laxenburg):</b> 20 hours a week for 10 months, aimed at PhD students.</li>
+      <li><b>Silicon Austria Labs, Junior Scientist Edge-AI Accelerators:</b> a hardware design post.</li>
+      <li><b>Rehrl + Partner (Salzburg, from €50,000) and Fut-ure Recruitment (Graz):</b> agency adverts with the employer unnamed. The language section did not show, and the Graz post could not be found again.</li>
+      <li><b>LX media, Junior Data Scientist (Salzburg, Linz or Wels, from €44,450) and Reply, Junior Machine Learning / Data Engineer (Vienna):</b> the language section did not show, and agency or consultancy work for Austrian clients usually needs German.</li>
+      <li><b>Internships and working-student posts at Infineon, RBI, Siemens, Erste, Tractive, OMV and SIMStation:</b> left out because you asked for graduate and junior roles only.</li>
+      <li><b>Linz, Innsbruck, Klagenfurt, St. Pölten and Dornbirn:</b> no English-speaking graduate or junior data role passed the checks in this round.</li>
+    </ul>
+  </details>
+
+  <details class="fold add" id="add">
+    <summary>Add a role you found</summary>
+    <form id="add-form" autocomplete="off">
+      <label for="f-employer">Employer<input id="f-employer" name="employer" required maxlength="120"></label>
+      <label for="f-title">Role<input id="f-title" name="title" required maxlength="160"></label>
+      <label for="f-city">City<select id="f-city" name="city"></select></label>
+      <label for="f-location">Location<input id="f-location" name="location" maxlength="160"></label>
+      <label for="f-salary">Salary as advertised<input id="f-salary" name="salary" maxlength="100" placeholder="From €3,500 a month"></label>
+      <label for="f-pay">Monthly gross in euros<input id="f-pay" name="payMonthly" type="number" min="0" step="1" inputmode="numeric" placeholder="3500"></label>
+      <label for="f-deadline">Closing date<input id="f-deadline" name="deadline" type="date"></label>
+      <label for="f-lang">Language
+        <select id="f-lang" name="lang">
+          <option value="en">English only</option>
+          <option value="deplus">German a plus</option>
+          <option value="unclear">Language unclear</option>
+        </select>
+      </label>
+      <label for="f-type">Type
+        <select id="f-type" name="type">
+          <option value="junior">Junior role</option>
+          <option value="grad">Graduate programme</option>
+        </select>
+      </label>
+      <label for="f-area">Area
+        <select id="f-area" name="area">
+          <option value="da">Data analyst and BI</option>
+          <option value="ds">Data science and ML</option>
+        </select>
+      </label>
+      <label for="f-link" class="wide">Link to the listing<input id="f-link" name="link" type="url" placeholder="https://" maxlength="600"></label>
+      <label for="f-notes" class="wide">Notes<textarea id="f-notes" name="notes" rows="2" maxlength="800"></textarea></label>
+      <button type="submit">Add role</button>
+    </form>
+  </details>
+
+  <details class="fold" id="sources">
+    <summary>Sources for the visa figures</summary>
+    <ul class="leftout">
+      <li><a href="https://ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_II_316/BGBLA_2025_II_316.pdf" target="_blank" rel="noopener">Fachkräfteverordnung 2026, BGBl. II Nr. 316/2025 (RIS)</a>: the 2026 shortage list, with items 21 and 34.</li>
+      <li><a href="https://www.migration.gv.at/en/types-of-immigration/permanent-immigration/austria-wide-shortage-occupations/" target="_blank" rel="noopener">migration.gv.at: Austria-wide shortage occupations</a></li>
+      <li><a href="https://www.migration.gv.at/de/formen-der-zuwanderung/dauerhafte-zuwanderung/fachkraefte-in-mangelberufen/" target="_blank" rel="noopener">migration.gv.at: Fachkräfte in Mangelberufen</a>: the points table and the company-language bonus.</li>
+      <li><a href="https://www.migration.gv.at/en/types-of-immigration/permanent-immigration/other-key-workers/" target="_blank" rel="noopener">migration.gv.at: other key workers</a> and <a href="https://www.migration.gv.at/de/formen-der-zuwanderung/dauerhafte-zuwanderung/sonstige-schluesselkraefte/" target="_blank" rel="noopener">sonstige Schlüsselkräfte</a>: €3,465 a month for 2026.</li>
+      <li><a href="https://migration.gv.at/en/types-of-immigration/permanent-immigration/very-highly-qualified-workers" target="_blank" rel="noopener">migration.gv.at: very highly qualified workers</a></li>
+      <li><a href="https://www.migration.gv.at/de/formen-der-zuwanderung/dauerhafte-zuwanderung/blaue-karte-eu/" target="_blank" rel="noopener">migration.gv.at: Blaue Karte EU</a> and <a href="https://www.oesterreich.gv.at/de/themen/menschen_aus_anderen_staaten/aufenthalt/3/2/Seite.120309" target="_blank" rel="noopener">oesterreich.gv.at: Blaue Karte EU, Antrag</a>: €55,678 for 2026, the labour market check and eight-week decisions.</li>
+      <li><a href="https://www.workinaustria.com/en/residence-employment/point-scheme" target="_blank" rel="noopener">Work in Austria: points system</a></li>
+      <li><a href="https://www.migration.gv.at/fileadmin/downloads/infoblaetter/Required_Documents_03.pdf" target="_blank" rel="noopener">migration.gv.at: required documents</a>: accepted English tests, and study taught in English as proof.</li>
+      <li><a href="https://taxnews.ey.com/news/2026-0152-austria-increases-minimum-salary-requirements-for-various-categories-of-foreign-employees" target="_blank" rel="noopener">EY: 2026 salary thresholds for foreign employees</a></li>
+      <li><a href="https://www.oesterreich.gv.at/de/themen/arbeit_beruf_und_pension/pension/1/1/Seite.270103" target="_blank" rel="noopener">oesterreich.gv.at: 2026 maximum contribution basis (€6,930)</a> and <a href="https://kpmg.com/at/de/media/newsletter/tax-news/2026/10/tn-kmu-sozialversicherungswerte-2027.html" target="_blank" rel="noopener">KPMG: 2027 values (€7,410)</a></li>
+      <li><a href="https://wko.at/sbg/arbeitsrecht/praesentation-webinar-rot-weiss-rot-karte.pdf" target="_blank" rel="noopener">WKO Salzburg: webinar slides on the points system</a></li>
+      <li><a href="https://www.fragomen.com/insights/austria-reforms-relax-rules-on-employer-changes-and-unemployment.html" target="_blank" rel="noopener">Fragomen: August 2026 changes on employer moves and unemployment</a></li>
+      <li><a href="https://theprint.in/world/india-austria-sign-agreements-on-migration-and-mobility-working-holiday-programme/1296270/" target="_blank" rel="noopener">ThePrint: India and Austria sign the Working Holiday Programme agreement</a></li>
+      <li><a href="https://www.statistik.at/fileadmin/announcement/2026/02/20260209Bevoelkerung1.1.2026EN.pdf" target="_blank" rel="noopener">Statistik Austria: population on 1 January 2026</a>, for the ten largest cities.</li>
+    </ul>
+  </details>
+
+  <footer>
+    <p>The ten cities are Austria's largest by population: Vienna, Graz, Linz, Salzburg, Innsbruck, Klagenfurt, Villach, Wels, St. Pölten and Dornbirn. Places nearby, such as Elsbethen, Pasching and Premstätten, are noted under the city they sit beside.</p>
+    <p>Listings come from search results for devjobs.at, karriere.at, WeAreDevelopers, iAgora, HeySuccess, Academic Positions, Glassdoor and employer sites, searched on 4 November 2026. The adverts themselves could not be opened, so check dates, pay and language on each one.</p>
+    <p>Visa figures are general information from Austrian government pages and adviser summaries, not immigration advice. For your own case, ask the Austrian Embassy in London or an Austrian immigration lawyer.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="application/json" id="roles-data">[
+ {
+  "id": "omv-trainee-analytics",
+  "type": "grad",
+  "area": "da",
+  "priority": "A",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "OMV",
+  "title": "Trainee Analytics (gn), Energy Trading",
+  "location": "Vienna head office",
+  "salary": "About €66,304 a year (figure not checked)",
+  "payMonthly": 4736,
+  "payNote": "The €66,304 figure came from one garbled search snippet. OMV's trading trainee advert gives at least €56,369.40. Both clear the Blue Card floor of €55,678.",
+  "lang": "en",
+  "langNote": "Listed among graduate programmes for English speakers. No German requirement showed in the search results.",
+  "terms": "Graduate trainee programme",
+  "start": "OMV says its energy trainee programme has no fixed start date.",
+  "fit": "Power BI dashboards and Python analytics for the trading team, plus moving reports onto a new data platform. Your KSI and house-price projects cover the Python side. Expect questions on Power BI, which your CV lists without a project.",
+  "check": "Asks for first experience from an internship or working-student job, or up to a year of work. Your Sparks Foundation internship and Practera placement fit that description.",
+  "visaNote": "Pay above €55,678 points to the EU Blue Card, which needs no points and no language certificate.",
+  "link": "https://www.iagora.com/work/en/offer/graduate-programme-austria-it/6305911",
+  "source": "iAgora",
+  "deadline": null
+ },
+ {
+  "id": "sal-junior-scientist-ai",
+  "type": "junior",
+  "area": "ds",
+  "priority": "A",
+  "city": "Graz",
+  "cities": ["Graz"],
+  "employer": "Silicon Austria Labs (SAL)",
+  "title": "Junior Scientist AI (Job-ID 238-1)",
+  "location": "Graz, Inffeldgasse",
+  "salary": "From €3,963 a month × 14 (€55,482); one copy says €4,056",
+  "payMonthly": 3963,
+  "payNote": "At €3,963 the year comes to €196 under the Blue Card floor. At €4,056 it clears it.",
+  "lang": "deplus",
+  "langNote": "English essential, German an advantage.",
+  "terms": "Permanent, full-time research post",
+  "start": "Not stated in the search results.",
+  "fit": "Asks for a master's in data science, applied mathematics or a related subject, with machine learning, deep learning (transformers, CNNs), Python, Git and PyTorch or TensorFlow. Your MSc and the Mondrian forest dissertation suit a research team. Prepare one deep learning example in detail, since your CV only names LSTM.",
+  "check": "Academic Positions lists it as a 2026 post. Apply on SAL's own page.",
+  "visaNote": "Pay clears the key-worker floor of €3,465 a month, so 55 points would do. At €3,977 a month or more the Blue Card applies instead.",
+  "link": "https://silicon-austria-labs.jobs.personio.de/job/2469516",
+  "source": "SAL careers, Academic Positions",
+  "deadline": null
+ },
+ {
+  "id": "infineon-jtp-data",
+  "type": "grad",
+  "area": "ds",
+  "priority": "A",
+  "city": "Villach",
+  "cities": ["Villach", "Graz"],
+  "employer": "Infineon Technologies Austria",
+  "title": "Junior Talent Program: Data Architect / Data Scientist",
+  "location": "Villach or Graz",
+  "salary": "Not shown in the search results",
+  "payMonthly": null,
+  "payNote": "Austrian adverts must state the minimum pay. Read it on the advert and compare it with €3,465 a month.",
+  "lang": "en",
+  "langNote": "The programme page asks for good English. No German requirement showed.",
+  "terms": "18 to 24 months with job rotations, training and a mentor",
+  "start": "Not stated in the search results.",
+  "fit": "A degree in statistics, computer science or data science; strong Python, frequentist and Bayesian modelling and visualisation; some R, SQL and PowerShell. Close to your MSc and your R work on the chemical detection and house-price projects.",
+  "check": "karriere.at showed this expired on 15 July 2026, while Glassdoor showed it posted three days earlier. Check it is open on Infineon's job site.",
+  "visaNote": "If pay reaches €3,465 a month, the key-worker route works with 55 points. A data science post at a chip maker could also count under shortage item 34.",
+  "link": "https://www.infineon.com/careers/our-locations/austria/junior-talent-program",
+  "source": "Infineon careers, Glassdoor",
+  "deadline": null
+ },
+ {
+  "id": "omv-trainee-trading",
+  "type": "grad",
+  "area": "ds",
+  "priority": "B",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "OMV",
+  "title": "Trainee, Trading and Optimisation",
+  "location": "Vienna, European gas trading",
+  "salary": "From €56,369.40 a year, including a lump sum for 5 hours of overtime",
+  "payMonthly": 4026,
+  "payNote": "The minimum includes an overtime lump sum. Check with OMV that the salary in the contract reaches €55,678 for the Blue Card.",
+  "lang": "unclear",
+  "langNote": "The language section did not show in the search results. OMV's analytics trainee advert is in English.",
+  "terms": "Two years and four rotations; trading and analytics are compulsory",
+  "start": "No fixed start date for OMV's energy trainee programme.",
+  "fit": "Statistical and mathematical modelling, coding in Python, C++ or Java, and automated trading systems. Your First in Mathematics and 80% in Statistical Machine Learning suit the modelling side.",
+  "check": "Open the advert and read its language section before you apply.",
+  "visaNote": "Pay sits just above the Blue Card floor. The Red-White-Red Card is the fallback if the overtime part does not count.",
+  "link": "https://www.heysuccess.com/opportunity/OMV-Trainee-Optimization-Trading-72906",
+  "source": "HeySuccess",
+  "deadline": null
+ },
+ {
+  "id": "rbi-tech-risk-ai",
+  "type": "junior",
+  "area": "da",
+  "priority": "B",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "Raiffeisen Bank International (RBI)",
+  "title": "Junior Tech Risk & AI/Automation Analyst (f/m/x)",
+  "location": "Vienna 1030, hybrid",
+  "salary": "From €46,600 a year (about €3,329 × 14)",
+  "payMonthly": 3329,
+  "payNote": "Below the key-worker floor of €3,465 a month and the Blue Card floor.",
+  "lang": "en",
+  "langNote": "Advertised in English, with English the only language listed.",
+  "terms": "Full-time, junior level",
+  "start": "Not stated in the search results.",
+  "fit": "Python, SQL and ETL on technology-risk data, with Power BI and AI or LLM tools for automation. Lead with your Practera pipeline for fifaworldcupsleep.me and its data-quality checks in GitHub Actions.",
+  "check": "RBI has two pages with this title. Apply through jobs.rbinternational.com.",
+  "visaNote": "At the advertised minimum only the shortage route (item 34) is open, and the job would have to count as data processing. Ask whether they would pay at least €3,465 a month, which opens the key-worker route.",
+  "link": "https://jobs.rbinternational.com/job/Wien-Junior-Tech-Risk-&-AIAutomation-Analyst-%28fmx%29-Wien-1030/1354679257",
+  "source": "RBI careers, WeAreDevelopers",
+  "deadline": null
+ },
+ {
+  "id": "ait-ai-delivery",
+  "type": "junior",
+  "area": "ds",
+  "priority": "B",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "AIT Austrian Institute of Technology",
+  "title": "Junior AI Solution Delivery Engineer (AI Factory Austria)",
+  "location": "Vienna, on site",
+  "salary": "From €55,482 or €56,784 a year, depending on the copy",
+  "payMonthly": 3963,
+  "payNote": "The higher figure clears the Blue Card floor and the lower one is €196 short. Both clear the key-worker floor.",
+  "lang": "unclear",
+  "langNote": "The language section did not show in the search results.",
+  "terms": "Full-time, junior level",
+  "start": "Not stated in the search results.",
+  "fit": "Technical support for partner projects on an AI computing service: model development, data pipelines, evaluation and MLOps with Python, Docker, Kubernetes, Slurm, Kubeflow and MLflow. Your Docker work on the conversion site and the QMC database counts. Kubernetes and Slurm would be new to you.",
+  "check": "Open the advert on jobs.ait.ac.at and read its language section before you apply.",
+  "visaNote": "Pay is at the Blue Card line. An offer of €3,977 a month or more clears it, and anything above €3,465 keeps the key-worker route open.",
+  "link": "https://jobs.ait.ac.at/Job/260562",
+  "source": "AIT careers, devjobs.at",
+  "deadline": null
+ },
+ {
+  "id": "niceshops-junior-da",
+  "type": "junior",
+  "area": "da",
+  "priority": "C",
+  "city": "Graz",
+  "cities": ["Graz"],
+  "employer": "niceshops",
+  "title": "Junior Data Analyst/Scientist",
+  "location": "Graz, hybrid",
+  "salary": "From €2,303 a month × 14; the board shows €32,000 to €60,000",
+  "payMonthly": 2303,
+  "payNote": "Well below the key-worker floor of €3,465 a month.",
+  "lang": "en",
+  "langNote": "Marked English only on devjobs.at, and asks for working English.",
+  "terms": "Permanent, full- or part-time",
+  "start": "Not stated in the search results.",
+  "fit": "Asks for 0 to 1 years of experience, with SQL, Looker and Google Cloud, working with business users on online-shop data. The level suits a new graduate.",
+  "check": "The devjobs.at page may be an old copy. Check the date on niceshops' own careers page.",
+  "visaNote": "At this pay only the shortage route could work, and an online-shop analyst job may not count as data processing. A long shot for a work permit.",
+  "link": "https://en.devjobs.at/job/aa2f5e248d47120d536d8cd0df180902",
+  "source": "devjobs.at",
+  "deadline": null
+ },
+ {
+  "id": "truechoice-jr-quant",
+  "type": "junior",
+  "area": "ds",
+  "priority": "C",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "TrueChoice Solutions",
+  "title": "(Jr) Quantitative Analyst / Data Scientist",
+  "location": "Vienna (also New York or Singapore)",
+  "salary": "Not stated",
+  "payMonthly": null,
+  "payNote": "No pay figure was found.",
+  "lang": "en",
+  "langNote": "Advertised in English by a New York software company with a team in Europe.",
+  "terms": "Full-time",
+  "start": "Not stated.",
+  "fit": "Analytics, quantitative analysis and client dashboards for a preference-analytics product. Asks for a degree plus a year of experience or excellent grades. Your First in Mathematics and MSc Merit cover the grades side.",
+  "check": "This advert has run for years and was last dated 13 May 2026. Email jobs@truechoice.io with the job title in the subject line and ask whether the Vienna post is open.",
+  "visaNote": "Ask about pay first, as the visa route depends on it.",
+  "link": "https://altjobs.startup-insider.com/job/jr-quantitative-analyst-data-scientist/",
+  "source": "Startup Insider",
+  "deadline": null
+ },
+ {
+  "id": "baxter-pv-da",
+  "type": "junior",
+  "area": "da",
+  "priority": "C",
+  "city": "Vienna",
+  "cities": ["Vienna"],
+  "employer": "Baxter",
+  "title": "Junior Global Pharmacovigilance Data Analyst (m/f/d)",
+  "location": "Vienna",
+  "salary": "Not shown",
+  "payMonthly": null,
+  "payNote": "No pay figure was found.",
+  "lang": "unclear",
+  "langNote": "A global team, but the language section did not show in the search results.",
+  "terms": "Junior role",
+  "start": "Not stated.",
+  "fit": "Reporting and data-quality work on drug-safety data with SQL. Asks for a degree in computer science, IT, data analytics, life sciences or similar.",
+  "check": "Seen on Glassdoor's October 2026 Vienna list but not found on Baxter's own site. Search jobs.baxter.com for pharmacovigilance roles in Vienna and apply only there, as Baxter warns about fake job offers.",
+  "visaNote": "Ask about pay first, as the visa route depends on it.",
+  "link": "https://jobs.baxter.com/en/",
+  "source": "Glassdoor",
+  "deadline": null
+ }
+]</script>
+<script>
+(function () {
+  "use strict";
+  var STATUSES = ["To apply", "Applied", "Assessment", "Interview", "Offer", "Rejected", "Not for me"];
+  var CLOSED_STATUSES = ["Rejected", "Not for me"];
+  var IN_PROGRESS = ["Applied", "Assessment", "Interview"];
+  var TYPE_LABEL = { grad: "Graduate programme", junior: "Junior role" };
+  var AREA_LABEL = { da: "Data analyst and BI", ds: "Data science and ML" };
+  var LANG = {
+    en: { label: "English only", code: "EN", sub: "", cap: "English only", tone: "good" },
+    deplus: { label: "German a plus", code: "EN", sub: "+de", cap: "German a plus", tone: "info" },
+    unclear: { label: "Language unclear", code: "?", sub: "", cap: "check language", tone: "soon" }
+  };
+  var PRIORITY = { A: { label: "Apply first", rank: 0 }, B: { label: "Worth applying", rank: 1 }, C: { label: "Long shot", rank: 2 } };
+  var CITY_ORDER = ["Vienna", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach", "Wels", "St. Pölten", "Dornbirn"];
+  var BLUE_FLOOR = 55678;
+  var KEY_FLOOR = 3465;
+  var PAY = {
+    blue: { label: "Pay clears Blue Card floor", tone: "good", rank: 0 },
+    key: { label: "Pay clears key-worker floor", tone: "info", rank: 1 },
+    low: { label: "Pay below both floors", tone: "soon", rank: 2 },
+    unknown: { label: "Pay not shown", tone: "", rank: 3 }
+  };
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var LS_PROGRESS = "at2026.progress.v1";
+  var LS_ADDED = "at2026.added.v1";
+  var WINDOW_START = new Date(2026, 10, 1);
+  var WINDOW_END = new Date(2027, 2, 31);
+
+  var BASE = [];
+  try { BASE = JSON.parse(document.getElementById("roles-data").textContent) || []; } catch (e) { BASE = []; }
+
+  function lsRead(key, fallback) {
+    try { var v = window.localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  function lsWrite(key, value) {
+    try { window.localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+  }
+  var localOK = lsWrite("at2026.probe", 1);
+
+  var listEl = document.getElementById("list");
+  var tallyEl = document.getElementById("tally");
+  var toastEl = document.getElementById("toast");
+  var citiesEl = document.getElementById("cities");
+  var state = { type: "all", city: "all", area: "all", lang: "all", pay: "all", q: "", sort: "priority", status: "active" };
+  var localProgress = lsRead(LS_PROGRESS, {}) || {};
+  var localAdded = lsRead(LS_ADDED, []) || [];
+  if (!Array.isArray(localAdded)) localAdded = [];
+  var remoteProgress = {};
+  var remoteAdded = [];
+  var db = null;
+  var dbState = "connecting";
+  var dbSlow = false;
+  var pending = false;
+  var openNotes = {};
+  var toastTimer = null;
+  var noteTimers = {};
+  var inflight = {};
+  var again = {};
+  var armed = null;
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function safeUrl(u) {
+    try { var x = new URL(String(u || "")); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : ""; }
+    catch (e) { return ""; }
+  }
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function today() { var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function parseISO(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
+    var p = String(iso).split("-").map(Number);
+    return new Date(p[0], p[1] - 1, p[2]);
+  }
+  function dayDiff(iso) { var t = parseISO(iso); return t ? Math.round((t - today()) / 86400000) : null; }
+  function isLocalId(id) { return /^local-/.test(String(id)); }
+  function citiesOf(r) {
+    var list = Array.isArray(r.cities) && r.cities.length ? r.cities.slice() : [];
+    if (r.city && list.indexOf(r.city) < 0) list.unshift(r.city);
+    return list.length ? list : ["Other"];
+  }
+  function langOf(r) { return LANG[r.lang] ? r.lang : "unclear"; }
+  function payMonthly(r) {
+    var m = Number(r.payMonthly);
+    return isFinite(m) && m > 0 ? m : null;
+  }
+  function payRoute(r) {
+    var m = payMonthly(r);
+    if (m === null) return "unknown";
+    if (m * 14 >= BLUE_FLOOR) return "blue";
+    if (m >= KEY_FLOOR) return "key";
+    return "low";
+  }
+  function euros(n) { return "€" + Math.round(n).toLocaleString("en-GB"); }
+
+  function progressFor(id) {
+    if (remoteProgress[id]) return remoteProgress[id];
+    return localProgress[id] || null;
+  }
+
+  function roles() {
+    var seen = {};
+    var addedAll = remoteAdded.concat(localAdded).filter(function (r) {
+      if (!r || !r.id || seen[r.id]) return false;
+      seen[r.id] = true;
+      return true;
+    });
+    return BASE.concat(addedAll).map(function (r) {
+      var p = progressFor(r.id) || {};
+      return Object.assign({}, r, {
+        status: STATUSES.indexOf(p.status) >= 0 ? p.status : "To apply",
+        myNotes: typeof p.myNotes === "string" ? p.myNotes : ""
+      });
+    });
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+  }
+
+  function saveWhere() {
+    if (dbState === "on") return "Saved";
+    return localOK ? "Saved on this device" : "Not saved: this view blocks storage";
+  }
+
+  function ticketFor(r) {
+    var l = LANG[langOf(r)];
+    var cs = citiesOf(r);
+    return {
+      tone: l.tone,
+      city: cs[0] === "Other" ? "Austria" : cs[0] + (cs.length > 1 ? " +" + (cs.length - 1) : ""),
+      code: l.code,
+      sub: l.sub,
+      cap: l.cap
+    };
+  }
+
+  function priRank(r) { return (PRIORITY[r.priority] || PRIORITY.B).rank; }
+  function payRank(r) { return PAY[payRoute(r)].rank; }
+  function cityRank(r) {
+    var i = CITY_ORDER.indexOf(r.city);
+    return i >= 0 ? i : 99;
+  }
+  function byEmployer(a, b) {
+    return String(a.employer || "").localeCompare(String(b.employer || ""), "en-GB") || String(a.title || "").localeCompare(String(b.title || ""), "en-GB");
+  }
+  function compare(a, b) {
+    if (state.sort === "employer") return byEmployer(a, b);
+    if (state.sort === "pay") {
+      var pa = payMonthly(a), pb = payMonthly(b);
+      if (pa === null && pb !== null) return 1;
+      if (pb === null && pa !== null) return -1;
+      if (pa !== null && pb !== null && pa !== pb) return pb - pa;
+      return priRank(a) - priRank(b) || byEmployer(a, b);
+    }
+    if (state.sort === "city") {
+      var c = cityRank(a) - cityRank(b);
+      if (c) return c;
+    }
+    return priRank(a) - priRank(b) || payRank(a) - payRank(b) || byEmployer(a, b);
+  }
+
+  function statusOK(r) {
+    if (state.status === "active") return CLOSED_STATUSES.indexOf(r.status) < 0;
+    if (state.status === "all") return true;
+    return r.status === state.status;
+  }
+  function langOK(r) {
+    var l = langOf(r);
+    if (state.lang === "all") return true;
+    if (state.lang === "english") return l === "en" || l === "deplus";
+    return l === state.lang;
+  }
+
+  function matches(r, ignore) {
+    ignore = ignore || {};
+    if (!ignore.type && state.type !== "all" && r.type !== state.type) return false;
+    if (!ignore.city && state.city !== "all" && citiesOf(r).indexOf(state.city) < 0) return false;
+    if (state.area !== "all" && AREA_LABEL[r.area] && r.area !== state.area) return false;
+    if (!langOK(r)) return false;
+    if (state.pay !== "all" && payRoute(r) !== state.pay) return false;
+    if (!statusOK(r)) return false;
+    if (state.q) {
+      var hay = [r.employer, r.title, r.location, citiesOf(r).join(" ")].join(" ").toLowerCase();
+      if (hay.indexOf(state.q) < 0) return false;
+    }
+    return true;
+  }
+
+  function deadlineText(r) {
+    var left = dayDiff(r.deadline);
+    if (left === null) return "";
+    var t = parseISO(r.deadline);
+    var when = t.getDate() + " " + MONTHS[t.getMonth()] + " " + t.getFullYear();
+    if (left < 0) return "Closed on " + when;
+    if (left === 0) return "Closes today";
+    return "Closes " + when + ", " + left + (left === 1 ? " day left" : " days left");
+  }
+
+  function rowHTML(r) {
+    var tk = ticketFor(r);
+    var pri = PRIORITY[r.priority] || PRIORITY.B;
+    var pr = PAY[payRoute(r)];
+    var link = safeUrl(r.link);
+    var done = CLOSED_STATUSES.indexOf(r.status) >= 0;
+    var options = STATUSES.map(function (s) {
+      return '<option value="' + esc(s) + '"' + (s === r.status ? " selected" : "") + ">" + esc(s) + "</option>";
+    }).join("");
+    var meta = [];
+    if (r.location) meta.push("<span>" + esc(r.location) + "</span>");
+    if (r.salary) meta.push('<span class="sal">' + esc(r.salary) + "</span>");
+    if (r.terms) meta.push("<span>" + esc(r.terms) + "</span>");
+    var dl = deadlineText(r);
+    var titleHTML = link
+      ? '<a href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(r.title) + "</a>"
+      : esc(r.title);
+    var idAttr = esc(r.id);
+    return '' +
+      '<article class="role' + (done ? " is-done" : "") + '" data-id="' + idAttr + '">' +
+        '<div class="ticket tone-' + tk.tone + '" aria-label="' + esc(tk.city + ", " + tk.cap) + '">' +
+          '<span class="t-city">' + esc(tk.city) + "</span>" +
+          '<span class="t-code">' + esc(tk.code) + (tk.sub ? "<small>" + esc(tk.sub) + "</small>" : "") + "</span>" +
+          '<span class="t-cap">' + esc(tk.cap) + "</span>" +
+        "</div>" +
+        '<div class="role-main">' +
+          '<p class="employer"><span>' + esc(r.employer) + '</span><span class="kind">' + esc(TYPE_LABEL[r.type] || "") + "</span></p>" +
+          '<h3 class="title">' + titleHTML + "</h3>" +
+          (meta.length ? '<p class="meta">' + meta.join("") + "</p>" : "") +
+          (r.fit ? '<p class="fit">' + esc(r.fit) + "</p>" : "") +
+          (dl ? '<p class="small"><b>Closing:</b> ' + esc(dl) + "</p>" : "") +
+          (r.start ? '<p class="small"><b>Start:</b> ' + esc(r.start) + "</p>" : "") +
+          (r.payNote ? '<p class="small"><b>Pay:</b> ' + esc(r.payNote) + "</p>" : "") +
+          (r.langNote ? '<p class="small"><b>Language:</b> ' + esc(r.langNote) + "</p>" : "") +
+          (r.check ? '<p class="small warn"><b>Check:</b> ' + esc(r.check) + "</p>" : "") +
+          (r.visaNote ? '<p class="small"><b>Visa:</b> ' + esc(r.visaNote) + "</p>" : "") +
+          '<div class="chips">' +
+            '<span class="chip pri-' + esc(r.priority || "B") + '">' + esc(pri.label) + "</span>" +
+            '<span class="chip' + (pr.tone ? " tone-" + pr.tone : "") + '">' + esc(pr.label) + "</span>" +
+            (AREA_LABEL[r.area] ? '<span class="chip">' + esc(AREA_LABEL[r.area]) + "</span>" : "") +
+            (r.source ? '<span class="chip">Found on ' + esc(r.source) + "</span>" : "") +
+            (r.addedByYou ? '<span class="chip">Added by you</span>' : "") +
+          "</div>" +
+        "</div>" +
+        '<div class="side">' +
+          '<label for="status-' + idAttr + '">Status<select class="status" id="status-' + idAttr + '" data-id="' + idAttr + '">' + options + "</select></label>" +
+          (link ? '<a class="open" href="' + esc(link) + '" target="_blank" rel="noopener">Open listing</a>' : "") +
+          '<details class="mynotes" data-id="' + idAttr + '"' + (openNotes[r.id] ? " open" : "") + ">" +
+            "<summary>Your notes" + (r.myNotes ? " (saved)" : "") + "</summary>" +
+            '<textarea class="notes-input" id="notes-' + idAttr + '" data-id="' + idAttr + '" rows="4" maxlength="2000" placeholder="Type your notes here" aria-label="Your notes for ' + esc(r.title) + '">' + esc(r.myNotes) + "</textarea>" +
+            '<span class="note-hint" data-hint="' + idAttr + '" aria-live="polite"></span>' +
+          "</details>" +
+          (r.addedByYou ? '<button class="remove" type="button" data-id="' + idAttr + '">Remove</button>' : "") +
+        "</div>" +
+      "</article>";
+  }
+
+  function renderTally(all) {
+    var todo = 0, english = 0, blue = 0, active = 0, offers = 0;
+    all.forEach(function (r) {
+      var open = CLOSED_STATUSES.indexOf(r.status) < 0;
+      if (r.status === "To apply") todo++;
+      if (open && (langOf(r) === "en" || langOf(r) === "deplus")) english++;
+      if (open && payRoute(r) === "blue") blue++;
+      if (IN_PROGRESS.indexOf(r.status) >= 0) active++;
+      if (r.status === "Offer") offers++;
+    });
+    var saveText = dbState === "on" ? (dbSlow ? "Saved progress has not loaded yet; changes still save" : "Changes save to your account")
+      : dbState === "off" ? (localOK ? "Changes save on this device only" : "This view cannot save changes")
+      : "Loading your saved progress";
+    tallyEl.innerHTML =
+      "<span><b>" + todo + "</b> to apply</span>" +
+      "<span><b>" + english + "</b> with English stated</span>" +
+      "<span><b>" + blue + "</b> with Blue Card pay</span>" +
+      "<span><b>" + active + "</b> in progress</span>" +
+      "<span><b>" + offers + "</b> " + (offers === 1 ? "offer" : "offers") + "</span>" +
+      "<span>" + esc(saveText) + "</span>";
+  }
+
+  function cityButton(name, label, count) {
+    var on = state.city === name;
+    return '<button class="pick' + (count ? "" : " is-zero") + '" type="button" data-city="' + esc(name) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+      esc(label) + '<span class="n">' + count + "</span></button>";
+  }
+
+  function renderCities(all) {
+    var pool = all.filter(function (r) { return matches(r, { city: true }); });
+    var counts = {};
+    pool.forEach(function (r) { citiesOf(r).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
+    var html = cityButton("all", "All cities", pool.length);
+    CITY_ORDER.forEach(function (c) { html += cityButton(c, c, counts[c] || 0); });
+    var hasOther = all.some(function (r) { return citiesOf(r).indexOf("Other") >= 0; });
+    if (hasOther) html += cityButton("Other", "Other Austrian places", counts.Other || 0);
+    citiesEl.innerHTML = html;
+  }
+
+  function renderTabs(all) {
+    var counts = { all: 0, grad: 0, junior: 0 };
+    all.forEach(function (r) {
+      if (!matches(r, { type: true })) return;
+      counts.all++;
+      if (counts[r.type] != null) counts[r.type]++;
+    });
+    document.querySelectorAll("[data-count]").forEach(function (el) {
+      el.textContent = String(counts[el.getAttribute("data-count")] || 0);
+    });
+    document.querySelectorAll(".tab").forEach(function (t) {
+      t.setAttribute("aria-selected", t.getAttribute("data-type") === state.type ? "true" : "false");
+    });
+  }
+
+  function emptyHTML(title, body) {
+    return '<div class="empty"><p class="empty-title">' + esc(title) + "</p><p>" + esc(body) + "</p></div>";
+  }
+
+  function render() {
+    pending = false;
+    armed = null;
+    var all = roles();
+    renderTabs(all);
+    renderCities(all);
+    renderTally(all);
+    if (!all.length) {
+      listEl.innerHTML = emptyHTML("No roles saved yet", "Add the first one with the form below.");
+      return;
+    }
+    var rows = all.filter(function (r) { return matches(r); }).sort(compare);
+    if (!rows.length) {
+      if (state.city !== "all" && state.city !== "Other") {
+        listEl.innerHTML = emptyHTML("No role in " + state.city + " yet", "No English-speaking graduate or junior data role there passed the checks on 4 November. Try the weekly searches, and add one you find with the form below.");
+      } else {
+        listEl.innerHTML = emptyHTML("Nothing matches these filters", "Clear the search or set the filters back to Any.");
+      }
+      return;
+    }
+    listEl.innerHTML = rows.map(rowHTML).join("");
+  }
+
+  function isEditing() {
+    var a = document.activeElement;
+    return !!(a && listEl.contains(a) && /^(TEXTAREA|SELECT|INPUT)$/.test(a.tagName));
+  }
+  function scheduleRender() {
+    if (isEditing()) { pending = true; return; }
+    render();
+  }
+
+  function setHint(id, text) {
+    var sel = '.note-hint[data-hint="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]';
+    var el = listEl.querySelector(sel);
+    if (el) el.textContent = text;
+  }
+
+  function pushRemote(id) {
+    if (!db || dbState !== "on" || isLocalId(id)) return Promise.resolve(false);
+    if (inflight[id]) { again[id] = true; return inflight[id]; }
+    var body = remoteProgress[id];
+    inflight[id] = db.doc("progress/" + id).set(body)
+      .then(function () { return true; }, function () { return false; })
+      .then(function (ok) {
+        inflight[id] = null;
+        if (again[id]) { again[id] = false; return pushRemote(id); }
+        return ok;
+      });
+    return inflight[id];
+  }
+
+  function saveProgress(id, patch, quiet) {
+    var cur = progressFor(id) || {};
+    var next = {
+      status: STATUSES.indexOf(cur.status) >= 0 ? cur.status : "To apply",
+      myNotes: typeof cur.myNotes === "string" ? cur.myNotes : "",
+      statusChanged: cur.statusChanged || null
+    };
+    Object.keys(patch).forEach(function (k) { next[k] = patch[k]; });
+    localProgress[id] = next;
+    var savedLocal = lsWrite(LS_PROGRESS, localProgress);
+    if (dbState === "on" && !isLocalId(id)) {
+      remoteProgress[id] = next;
+      return pushRemote(id).then(function (ok) {
+        var msg = ok ? "Saved" : (savedLocal ? "Saved on this device; saving to your account failed" : "Not saved. Copy your text somewhere safe.");
+        if (quiet) setHint(id, msg); else toast(msg);
+      });
+    }
+    var msg = savedLocal ? saveWhere() : "Not saved: this view blocks storage. Copy your text somewhere safe.";
+    if (quiet) setHint(id, msg); else toast(msg);
+    return Promise.resolve();
+  }
+
+  listEl.addEventListener("change", function (e) {
+    var sel = e.target.closest && e.target.closest("select.status");
+    if (!sel) return;
+    var id = sel.getAttribute("data-id");
+    saveProgress(id, { status: sel.value, statusChanged: todayISO() }, false).then(function () {
+      sel.blur();
+      render();
+    });
+  });
+
+  listEl.addEventListener("input", function (e) {
+    var ta = e.target.closest && e.target.closest("textarea.notes-input");
+    if (!ta) return;
+    var id = ta.getAttribute("data-id");
+    setHint(id, "Saving");
+    clearTimeout(noteTimers[id]);
+    noteTimers[id] = setTimeout(function () { saveProgress(id, { myNotes: ta.value }, true); }, 600);
+  });
+
+  listEl.addEventListener("focusout", function (e) {
+    var ta = e.target.closest && e.target.closest("textarea.notes-input");
+    if (ta) {
+      var id = ta.getAttribute("data-id");
+      if (noteTimers[id]) {
+        clearTimeout(noteTimers[id]);
+        noteTimers[id] = null;
+        saveProgress(id, { myNotes: ta.value }, true);
+      }
+    }
+    setTimeout(function () { if (pending && !isEditing()) render(); }, 0);
+  });
+
+  listEl.addEventListener("toggle", function (e) {
+    var d = e.target;
+    if (d && d.classList && d.classList.contains("mynotes")) {
+      openNotes[d.getAttribute("data-id")] = d.open;
+    }
+  }, true);
+
+  listEl.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("button.remove");
+    if (!btn) return;
+    var id = btn.getAttribute("data-id");
+    if (armed !== id) {
+      listEl.querySelectorAll("button.remove.arm").forEach(function (b) { b.classList.remove("arm"); b.textContent = "Remove"; });
+      armed = id;
+      btn.classList.add("arm");
+      btn.textContent = "Tap again to remove";
+      return;
+    }
+    armed = null;
+    delete localProgress[id];
+    lsWrite(LS_PROGRESS, localProgress);
+    if (isLocalId(id)) {
+      localAdded = localAdded.filter(function (r) { return r.id !== id; });
+      lsWrite(LS_ADDED, localAdded);
+      toast("Removed");
+      render();
+      return;
+    }
+    if (!db) { toast("Removing this role needs your saved account data. Open the page in Claude and try again."); return; }
+    db.doc("added/" + id).delete()
+      .then(function () { toast("Removed"); return db.doc("progress/" + id).delete(); })
+      .catch(function () { toast("Could not remove it. Try again in a moment."); });
+  });
+
+  citiesEl.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-city]");
+    if (!b) return;
+    var c = b.getAttribute("data-city");
+    state.city = (state.city === c && c !== "all") ? "all" : c;
+    render();
+  });
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () { state.type = t.getAttribute("data-type"); render(); });
+  });
+  var qTimer = null;
+  document.getElementById("q").addEventListener("input", function (e) {
+    clearTimeout(qTimer);
+    var v = e.target.value;
+    qTimer = setTimeout(function () { state.q = v.trim().toLowerCase(); render(); }, 150);
+  });
+  document.getElementById("area-filter").addEventListener("change", function (e) { state.area = e.target.value; render(); });
+  document.getElementById("lang-filter").addEventListener("change", function (e) { state.lang = e.target.value; render(); });
+  document.getElementById("pay-filter").addEventListener("change", function (e) { state.pay = e.target.value; render(); });
+  document.getElementById("sort").addEventListener("change", function (e) { state.sort = e.target.value; render(); });
+  document.getElementById("status-filter").addEventListener("change", function (e) { state.status = e.target.value; render(); });
+
+  var citySelect = document.getElementById("f-city");
+  citySelect.innerHTML = CITY_ORDER.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("") +
+    '<option value="Other">Another Austrian place</option>';
+
+  document.getElementById("add-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = e.target;
+    var fd = new FormData(form);
+    var employer = String(fd.get("employer") || "").trim();
+    var title = String(fd.get("title") || "").trim();
+    if (!employer || !title) { toast("Add at least an employer and a role."); return; }
+    var deadline = String(fd.get("deadline") || "");
+    var type = String(fd.get("type") || "junior");
+    var area = String(fd.get("area") || "da");
+    var lang = String(fd.get("lang") || "unclear");
+    var city = String(fd.get("city") || "Other");
+    var pay = Number(fd.get("payMonthly"));
+    var notes = String(fd.get("notes") || "").trim();
+    var doc = {
+      employer: employer,
+      title: title,
+      city: CITY_ORDER.indexOf(city) >= 0 ? city : "Other",
+      location: String(fd.get("location") || "").trim(),
+      salary: String(fd.get("salary") || "").trim(),
+      payMonthly: isFinite(pay) && pay > 0 ? Math.round(pay) : null,
+      deadline: /^\d{4}-\d{2}-\d{2}$/.test(deadline) ? deadline : null,
+      type: TYPE_LABEL[type] ? type : "junior",
+      area: AREA_LABEL[area] ? area : "da",
+      lang: LANG[lang] ? lang : "unclear",
+      link: safeUrl(fd.get("link")),
+      fit: notes,
+      priority: "B",
+      posted: todayISO(),
+      addedByYou: true
+    };
+    if (dbState === "on" && db) {
+      try {
+        await db.collection("added").add(doc);
+        form.reset();
+        toast("Role added");
+        return;
+      } catch (err) {
+        if (err && err.code === "quota_exceeded") { toast("The page is full. Remove a few roles first."); return; }
+      }
+    }
+    doc.id = "local-" + Date.now().toString(36);
+    localAdded.push(doc);
+    if (lsWrite(LS_ADDED, localAdded)) {
+      form.reset();
+      toast("Role added on this device");
+    } else {
+      localAdded.pop();
+      toast("Could not add it here. This view blocks storage.");
+    }
+    render();
+  });
+
+  (function calc() {
+    var en = document.getElementById("c-en");
+    var de = document.getElementById("c-de");
+    var exp = document.getElementById("c-exp");
+    var corp = document.getElementById("c-corp");
+    var corpLabel = document.getElementById("c-corp-label");
+    var meter = document.getElementById("c-meter");
+    var fill = document.getElementById("c-fill");
+    var verdict = document.getElementById("c-verdict");
+    function update() {
+      var e = Number(en.value) || 0;
+      var d = Number(de.value) || 0;
+      var x = Number(exp.value) || 0;
+      corp.disabled = e === 0;
+      if (corp.disabled) corp.checked = false;
+      corpLabel.classList.toggle("is-off", corp.disabled);
+      var bonus = corp.checked ? 5 : 0;
+      var lang = Math.min(25, e + d + bonus);
+      var total = 30 + x + lang + 15;
+      var parts = [];
+      if (e) parts.push("English " + (e === 10 ? "B1+" : "A2") + " " + e);
+      if (d) parts.push("German " + (d === 15 ? "B1+" : d === 10 ? "A2" : "A1") + " " + d);
+      if (bonus) parts.push("company language 5");
+      document.getElementById("c-lang-note").textContent = parts.length ? parts.join(", ") : "No certificate";
+      document.getElementById("c-lang-pts").textContent = String(lang);
+      document.getElementById("c-exp-note").textContent = x ? "One half-year of matching work" : "Not counted";
+      document.getElementById("c-exp-pts").textContent = String(x);
+      document.getElementById("c-total").textContent = String(total);
+      fill.style.width = (Math.min(90, total) / 90 * 100).toFixed(1) + "%";
+      var ok = total >= 55;
+      meter.classList.toggle("ok", ok);
+      meter.setAttribute("aria-label", total + " of 90 points; 55 needed");
+      verdict.className = "verdict " + (ok ? "ok" : "short");
+      if (!ok) verdict.textContent = (55 - total) + (55 - total === 1 ? " point" : " points") + " short of 55.";
+      else if (total === 55) verdict.textContent = "Meets the 55-point minimum exactly.";
+      else verdict.textContent = "Meets the 55-point minimum with " + (total - 55) + " to spare.";
+    }
+    [en, de, exp, corp].forEach(function (el) { el.addEventListener("change", update); });
+    update();
+  })();
+
+  (function placeToday() {
+    var t = today();
+    var span = WINDOW_END - WINDOW_START;
+    var x = Math.max(0, Math.min(1, (t - WINDOW_START) / span)) * 100;
+    var pin = document.getElementById("pin-today");
+    if (pin) pin.style.left = x.toFixed(2) + "%";
+    var lab = document.getElementById("today-label");
+    if (lab) lab.textContent = "Today, " + t.getDate() + " " + MONTHS[t.getMonth()] + ":";
+  })();
+
+  render();
+
+  (async function connect() {
+    var api = null;
+    try {
+      api = (window.claude && typeof window.claude.use === "function") ? await window.claude.use("db") : null;
+    } catch (e) { api = null; }
+    if (!api) { dbState = "off"; scheduleRender(); return; }
+    db = api;
+    dbState = "on";
+    scheduleRender();
+    var slowTimer = setTimeout(function () { dbSlow = true; scheduleRender(); }, 10000);
+    function settle() { clearTimeout(slowTimer); if (dbSlow) { dbSlow = false; } }
+    db.collection("progress").onSnapshot(function (snap) {
+      if (!snap.metadata || !snap.metadata.fromCache) settle();
+      var next = {};
+      snap.docs.forEach(function (d) { var v = d.data(); if (v) next[d.id] = v; });
+      Object.keys(remoteProgress).forEach(function (id) { if (inflight[id] && !next[id]) next[id] = remoteProgress[id]; });
+      remoteProgress = next;
+      scheduleRender();
+    }, function () { settle(); dbState = "off"; scheduleRender(); });
+    db.collection("added").onSnapshot(function (snap) {
+      remoteAdded = snap.docs.map(function (d) { return Object.assign({}, d.data(), { id: d.id, addedByYou: true }); });
+      scheduleRender();
+    }, function () { scheduleRender(); });
+  })();
+})();
+</script>
+</body>
+</html>
